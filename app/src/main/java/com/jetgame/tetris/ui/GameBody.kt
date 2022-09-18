@@ -34,36 +34,19 @@ import com.jetgame.tetris.ui.theme.BodyColor
 import com.jetgame.tetris.ui.theme.ScreenBackground
 
 @Composable
-fun GameBody(
-    clickable: Clickable = combinedClickable(),
-    screen: @Composable () -> Unit
-) {
+fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () -> Unit) {
 
     Column(
-        Modifier
-            .fillMaxSize()
+        Modifier.fillMaxSize()
             .background(Color.Black)
             .background(BodyColor, RoundedCornerShape(10.dp))
             .padding(top = 20.dp)
     ) {
 
-        //Screen
+        // Screen
         Box(Modifier.align(Alignment.CenterHorizontally)) {
-
-
             Box(
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .size(330.dp, 400.dp)
-                    .padding(top = 20.dp)
-                    .background(Color.Black.copy(alpha = 0.8f))
-                    .padding(5.dp)
-                    .background(BodyColor)
-            )
-
-            Box(
-                Modifier
-                    .width(120.dp)
+                Modifier.width(120.dp)
                     .height(45.dp)
                     .align(Alignment.TopCenter)
                     .background(BodyColor)
@@ -72,17 +55,16 @@ fun GameBody(
                     stringResource(id = R.string.body_label),
                     modifier = Modifier.align(Alignment.Center),
                     textAlign = TextAlign.Center,
-                    fontFamily = FontFamily.Cursive,
+                    fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
-
             }
 
+            // Game Display
             Box(
-                Modifier
-                    .align(Alignment.Center)
-                    .size(360.dp, 380.dp)
+                Modifier.align(Alignment.Center)
+                    .size(500.dp, 400.dp)
                     .padding(start = 50.dp, end = 50.dp, top = 50.dp, bottom = 30.dp)
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
@@ -94,12 +76,7 @@ fun GameBody(
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(6.dp)
-                        .background(ScreenBackground)
-                ) {
+                Box(modifier = Modifier.fillMaxSize().padding(6.dp).background(ScreenBackground)) {
                     screen()
                 }
             }
@@ -107,91 +84,68 @@ fun GameBody(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val SettingText = @Composable { text: String, modifier: Modifier ->
-            Text(
-                text, modifier = modifier,
-                color = Color.Black.copy(0.9f),
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center
-            )
-        }
+        val settingText =
+            @Composable { text: String, modifier: Modifier ->
+                Text(
+                    text,
+                    modifier = modifier,
+                    color = Color.Black.copy(0.9f),
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
 
-
-        //Setting Button
-        Column(
-            modifier = Modifier
-                .padding(start = 40.dp, end = 40.dp)
-        ) {
+        // Setting Button
+        Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
             Row {
-                SettingText(stringResource(id = R.string.button_sounds), Modifier.weight(1f))
-                SettingText(stringResource(id = R.string.button_pause), Modifier.weight(1f))
-                SettingText(stringResource(id = R.string.button_reset), Modifier.weight(1f))
+                settingText(stringResource(id = R.string.button_sounds), Modifier.weight(1f))
+                settingText(stringResource(id = R.string.button_pause), Modifier.weight(1f))
+                settingText(stringResource(id = R.string.button_reset), Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(5.dp))
             Row {
 
-                //SOUNDS
+                // SOUNDS
                 GameButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 20.dp, end = 20.dp),
+                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
                     onClick = { clickable.onMute() },
                     size = SettingButtonSize
                 ) {}
 
-                //PAUSE
+                // PAUSE
                 GameButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 20.dp, end = 20.dp),
+                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
                     onClick = { clickable.onPause() },
                     size = SettingButtonSize
                 ) {}
 
-                //RESET
+                // RESET
                 GameButton(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 20.dp, end = 20.dp),
+                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
                     onClick = { clickable.onRestart() },
                     size = SettingButtonSize
                 ) {}
-
             }
         }
 
-
         Spacer(modifier = Modifier.height(30.dp))
 
+        // Game Button
+        val buttonText =
+            @Composable { modifier: Modifier, text: String ->
+                Text(text, modifier = modifier, color = Color.White.copy(0.9f), fontSize = 18.sp)
+            }
 
-        //Game Button
-        val ButtonText = @Composable { modifier: Modifier,
-                                       text: String ->
-            Text(
-                text, modifier = modifier,
-                color = Color.White.copy(0.9f),
-                fontSize = 18.sp
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(start = 40.dp, end = 40.dp)
-                .height(160.dp)
-        ) {
-            //DIRECTION BTN
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(1f)
-            ) {
+        Row(modifier = Modifier.padding(start = 40.dp, end = 40.dp).height(160.dp)) {
+            // DIRECTION BTN
+            Box(modifier = Modifier.fillMaxHeight().weight(1f)) {
                 GameButton(
                     Modifier.align(Alignment.TopCenter),
                     onClick = { clickable.onMove(Direction.Up) },
                     autoInvokeWhenPressed = false,
                     size = DirectionButtonSize
                 ) {
-                    ButtonText(it, stringResource(id = R.string.button_up))
+                    buttonText(it, stringResource(id = R.string.button_up))
                 }
                 GameButton(
                     Modifier.align(Alignment.CenterStart),
@@ -199,7 +153,7 @@ fun GameBody(
                     autoInvokeWhenPressed = true,
                     size = DirectionButtonSize
                 ) {
-                    ButtonText(it, stringResource(id = R.string.button_left))
+                    buttonText(it, stringResource(id = R.string.button_left))
                 }
                 GameButton(
                     Modifier.align(Alignment.CenterEnd),
@@ -207,7 +161,7 @@ fun GameBody(
                     autoInvokeWhenPressed = true,
                     size = DirectionButtonSize
                 ) {
-                    ButtonText(it, stringResource(id = R.string.button_right))
+                    buttonText(it, stringResource(id = R.string.button_right))
                 }
                 GameButton(
                     Modifier.align(Alignment.BottomCenter),
@@ -215,32 +169,24 @@ fun GameBody(
                     autoInvokeWhenPressed = true,
                     size = DirectionButtonSize
                 ) {
-                    ButtonText(it, stringResource(id = R.string.button_down))
+                    buttonText(it, stringResource(id = R.string.button_down))
                 }
-
             }
 
-
-            //ROTATE BTN
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-            ) {
+            // ROTATE BTN
+            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
                 GameButton(
                     Modifier.align(Alignment.CenterEnd),
                     onClick = { clickable.onRotate() },
                     autoInvokeWhenPressed = false,
                     size = RotateButtonSize
                 ) {
-                    ButtonText(it, stringResource(id = R.string.button_rotate))
+                    buttonText(it, stringResource(id = R.string.button_rotate))
                 }
             }
         }
-
     }
 }
-
 
 fun DrawScope.drawScreenBorder(
     topLef: Offset,
@@ -248,43 +194,32 @@ fun DrawScope.drawScreenBorder(
     bottomLeft: Offset,
     bottomRight: Offset
 ) {
-    var path = Path().apply {
-        moveTo(topLef.x, topLef.y)
-        lineTo(topRight.x, topRight.y)
-        lineTo(
-            topRight.x / 2 + topLef.x / 2,
-            topLef.y + topRight.x / 2 + topLef.x / 2
-        )
-        lineTo(
-            topRight.x / 2 + topLef.x / 2,
-            bottomLeft.y - topRight.x / 2 + topLef.x / 2
-        )
-        lineTo(bottomLeft.x, bottomLeft.y)
-        close()
-    }
+    var path =
+        Path().apply {
+            moveTo(topLef.x, topLef.y)
+            lineTo(topRight.x, topRight.y)
+            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
+            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
+            lineTo(bottomLeft.x, bottomLeft.y)
+            close()
+        }
     drawPath(path, Color.Black.copy(0.5f))
 
-    path = Path().apply {
-        moveTo(bottomRight.x, bottomRight.y)
-        lineTo(bottomLeft.x, bottomLeft.y)
-        lineTo(
-            topRight.x / 2 + topLef.x / 2,
-            bottomLeft.y - topRight.x / 2 + topLef.x / 2
-        )
-        lineTo(
-            topRight.x / 2 + topLef.x / 2,
-            topLef.y + topRight.x / 2 + topLef.x / 2
-        )
-        lineTo(topRight.x, topRight.y)
-        close()
-    }
+    path =
+        Path().apply {
+            moveTo(bottomRight.x, bottomRight.y)
+            lineTo(bottomLeft.x, bottomLeft.y)
+            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
+            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
+            lineTo(topRight.x, topRight.y)
+            close()
+        }
 
     drawPath(path, Color.White.copy(0.5f))
-
 }
 
-
-data class Clickable constructor(
+data class Clickable
+constructor(
     val onMove: (Direction) -> Unit,
     val onRotate: () -> Unit,
     val onRestart: () -> Unit,
@@ -300,13 +235,11 @@ fun combinedClickable(
     onMute: () -> Unit = {}
 ) = Clickable(onMove, onRotate, onRestart, onPause, onMute)
 
-
 @Preview(widthDp = 400, heightDp = 700)
 @Composable
 fun PreviewGameBody() {
     GameBody {}
 }
-
 
 val DirectionButtonSize = 60.dp
 val RotateButtonSize = 90.dp
