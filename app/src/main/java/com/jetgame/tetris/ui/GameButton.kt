@@ -1,7 +1,6 @@
 package com.jetgame.tetris.ui
 
 import android.view.MotionEvent.*
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -21,18 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.jetgame.tetris.ui.theme.Purple200
 import com.jetgame.tetris.ui.theme.Purple500
 import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.ticker
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -51,72 +46,63 @@ fun GameButton(
     val interactionSource = MutableInteractionSource()
 
     Box(
-        modifier = modifier
-            .shadow(5.dp, shape = backgroundShape)
-            .size(size = size)
-            .clip(backgroundShape)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Purple200,
-                        Purple500
-                    ),
-                    startY = 0f,
-                    endY = 80f
-                )
-            ).indication(interactionSource = interactionSource, indication = rememberRipple())
-            .run {
-                if (autoInvokeWhenPressed) {
-                    pointerInteropFilter {
-                        when (it.action) {
-                            ACTION_DOWN -> {
-                                coroutineScope.launch {
-                                    // Remove any old interactions if we didn't fire stop / cancel properly
-                                    pressedInteraction.value?.let { oldValue ->
-                                        val interaction = PressInteraction.Cancel(oldValue)
+        modifier =
+            modifier
+                .shadow(5.dp, shape = backgroundShape)
+                .size(size = size)
+                .clip(backgroundShape)
+                .background(Purple500)
+                .indication(interactionSource = interactionSource, indication = rememberRipple())
+                .run {
+                    if (autoInvokeWhenPressed) {
+                        pointerInteropFilter {
+                            when (it.action) {
+                                ACTION_DOWN -> {
+                                    coroutineScope.launch {
+                                        // Remove any old interactions if we didn't fire stop /
+                                        // cancel properly
+                                        pressedInteraction.value?.let { oldValue ->
+                                            val interaction = PressInteraction.Cancel(oldValue)
+                                            interactionSource.emit(interaction)
+                                            pressedInteraction.value = null
+                                        }
+                                        val interaction = PressInteraction.Press(Offset(50f, 50f))
                                         interactionSource.emit(interaction)
-                                        pressedInteraction.value = null
+                                        pressedInteraction.value = interaction
                                     }
-                                    val interaction = PressInteraction.Press(Offset(50f, 50f))
-                                    interactionSource.emit(interaction)
-                                    pressedInteraction.value = interaction
-                                }
 
-
-                                ticker = ticker(initialDelayMillis = 300, delayMillis = 60)
-                                coroutineScope.launch {
-                                    ticker
-                                        .receiveAsFlow()
-                                        .collect { onClick() }
-                                }
-                            }
-                            ACTION_CANCEL, ACTION_UP -> {
-                                coroutineScope.launch {
-                                    pressedInteraction.value?.let {
-                                        val interaction = PressInteraction.Cancel(it)
-                                        interactionSource.emit(interaction)
-                                        pressedInteraction.value = null
+                                    ticker = ticker(initialDelayMillis = 300, delayMillis = 60)
+                                    coroutineScope.launch {
+                                        ticker.receiveAsFlow().collect { onClick() }
                                     }
                                 }
-                                ticker.cancel()
-                                if (it.action == ACTION_UP) {
-                                    onClick()
-                                }
-                            }
-                            else -> {
-                                if (it.action != ACTION_MOVE) {
+                                ACTION_CANCEL,
+                                ACTION_UP -> {
+                                    coroutineScope.launch {
+                                        pressedInteraction.value?.let {
+                                            val interaction = PressInteraction.Cancel(it)
+                                            interactionSource.emit(interaction)
+                                            pressedInteraction.value = null
+                                        }
+                                    }
                                     ticker.cancel()
+                                    if (it.action == ACTION_UP) {
+                                        onClick()
+                                    }
                                 }
-                                return@pointerInteropFilter false
+                                else -> {
+                                    if (it.action != ACTION_MOVE) {
+                                        ticker.cancel()
+                                    }
+                                    return@pointerInteropFilter false
+                                }
                             }
+                            true
                         }
-                        true
+                    } else {
+                        clickable { onClick() }
                     }
-                } else {
-                    clickable { onClick() }
                 }
-            }
-
     ) {
         content(Modifier.align(Alignment.Center))
     }
