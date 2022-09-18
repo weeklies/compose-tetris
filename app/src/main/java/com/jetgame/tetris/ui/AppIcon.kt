@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.jetgame.tetris.R
 import com.jetgame.tetris.ui.theme.BodyColor
 import com.jetgame.tetris.ui.theme.BrickSpirit
 import com.jetgame.tetris.ui.theme.ScreenBackground
@@ -30,19 +32,16 @@ import com.jetgame.tetris.ui.theme.ScreenBackground
 private fun AppIcon() {
 
     Column(
-        Modifier
-            .fillMaxSize()
+        Modifier.fillMaxSize()
             .background(Color.Transparent)
             .background(BodyColor, RoundedCornerShape(50.dp))
             .padding(top = 30.dp)
     ) {
 
-        //Screen
+        // Screen
         Box(Modifier.align(Alignment.CenterHorizontally)) {
-
             Box(
-                Modifier
-                    .align(Alignment.Center)
+                Modifier.align(Alignment.Center)
                     .size(360.dp, 220.dp)
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
             ) {
@@ -55,15 +54,10 @@ private fun AppIcon() {
                     )
                 }
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(12.dp)
-                        .background(ScreenBackground)
-                )
+                Box(modifier = Modifier.fillMaxSize().padding(12.dp).background(ScreenBackground))
 
                 Text(
-                    "TETRIS",
+                    stringResource(id = R.string.body_label),
                     textAlign = TextAlign.Center,
                     color = BrickSpirit,
                     fontSize = 75.sp,
@@ -73,55 +67,25 @@ private fun AppIcon() {
             }
         }
 
-
         Row(
-            modifier = Modifier
-                .padding(start = 45.dp, end = 45.dp)
-                .height(160.dp)
-                .padding(bottom = 10.dp)
+            modifier =
+                Modifier.padding(start = 45.dp, end = 45.dp).height(160.dp).padding(bottom = 10.dp)
         ) {
-            //DIRECTION BTN
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .weight(0.55f)
-            ) {
-                GameButton(
-                    Modifier.align(Alignment.TopCenter),
-                    size = DirectionButtonSize
-                )
-                GameButton(
-                    Modifier.align(Alignment.CenterStart),
-                    size = DirectionButtonSize
-                )
-                GameButton(
-                    Modifier.align(Alignment.CenterEnd),
-                    size = DirectionButtonSize
-                )
-                GameButton(
-                    Modifier.align(Alignment.BottomCenter),
-                    size = DirectionButtonSize
-                )
-
+            // DIRECTION BTN
+            Box(modifier = Modifier.fillMaxHeight().weight(0.55f)) {
+                GameButton(Modifier.align(Alignment.TopCenter), size = DirectionButtonSize)
+                GameButton(Modifier.align(Alignment.CenterStart), size = DirectionButtonSize)
+                GameButton(Modifier.align(Alignment.CenterEnd), size = DirectionButtonSize)
+                GameButton(Modifier.align(Alignment.BottomCenter), size = DirectionButtonSize)
             }
 
-
-            //ROTATE BTN
-            Box(
-                modifier = Modifier
-                    .weight(0.45f)
-                    .fillMaxHeight()
-            ) {
-                GameButton(
-                    Modifier.align(Alignment.CenterEnd),
-                    size = RotateButtonSize
-                )
+            // ROTATE BTN
+            Box(modifier = Modifier.weight(0.45f).fillMaxHeight()) {
+                GameButton(Modifier.align(Alignment.CenterEnd), size = RotateButtonSize)
             }
         }
-
     }
 }
-
 
 @Preview(widthDp = 400, heightDp = 400)
 @Composable

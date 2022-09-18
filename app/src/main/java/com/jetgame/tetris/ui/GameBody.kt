@@ -31,10 +31,11 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
         Modifier.fillMaxSize()
             .background(Color.Black)
             .background(BodyColor, RoundedCornerShape(10.dp))
-            .padding(top = 20.dp)
+            .padding(top = 20.dp),
+        verticalArrangement = Arrangement.Center,
     ) {
         // Screen
-        Column() {
+        Column {
             // Setting Button
             Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
                 val settingText =
@@ -60,10 +61,20 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row {
-                    settingText(stringResource(id = R.string.button_sounds), Modifier.weight(1f))
-                    settingText(stringResource(id = R.string.button_pause), Modifier.weight(1f))
-                    settingText(stringResource(id = R.string.button_reset), Modifier.weight(1f))
+                    settingText(
+                        stringResource(id = R.string.button_sounds),
+                        Modifier.weight(1f),
+                    )
+                    settingText(
+                        stringResource(id = R.string.button_pause),
+                        Modifier.weight(1f),
+                    )
+                    settingText(
+                        stringResource(id = R.string.button_reset),
+                        Modifier.weight(1f),
+                    )
                 }
+
                 Spacer(modifier = Modifier.height(5.dp))
 
                 Row {
