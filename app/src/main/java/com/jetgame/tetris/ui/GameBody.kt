@@ -2,16 +2,7 @@ package com.jetgame.tetris.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -42,30 +33,68 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
             .background(BodyColor, RoundedCornerShape(10.dp))
             .padding(top = 20.dp)
     ) {
-
         // Screen
-        Box(Modifier.align(Alignment.CenterHorizontally)) {
-            Box(
-                Modifier.width(120.dp)
-                    .height(45.dp)
-                    .align(Alignment.TopCenter)
-                    .background(BodyColor)
-            ) {
+        Column() {
+            // Setting Button
+            Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
+                val settingText =
+                    @Composable { text: String, modifier: Modifier ->
+                        Text(
+                            text,
+                            modifier = modifier,
+                            color = Color.Black.copy(0.9f),
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
                 Text(
                     stringResource(id = R.string.body_label),
-                    modifier = Modifier.align(Alignment.Center),
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
                     textAlign = TextAlign.Center,
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row {
+                    settingText(stringResource(id = R.string.button_sounds), Modifier.weight(1f))
+                    settingText(stringResource(id = R.string.button_pause), Modifier.weight(1f))
+                    settingText(stringResource(id = R.string.button_reset), Modifier.weight(1f))
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Row {
+
+                    // SOUNDS
+                    GameButton(
+                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
+                        onClick = { clickable.onMute() },
+                        size = SettingButtonSize
+                    ) {}
+
+                    // PAUSE
+                    GameButton(
+                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
+                        onClick = { clickable.onPause() },
+                        size = SettingButtonSize
+                    ) {}
+
+                    // RESET
+                    GameButton(
+                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
+                        onClick = { clickable.onRestart() },
+                        size = SettingButtonSize
+                    ) {}
+                }
             }
 
             // Game Display
             Box(
-                Modifier.align(Alignment.Center)
-                    .size(500.dp, 400.dp)
-                    .padding(start = 50.dp, end = 50.dp, top = 50.dp, bottom = 30.dp)
+                Modifier.size(500.dp, 400.dp)
+                    .padding(start = 50.dp, end = 50.dp, top = 30.dp, bottom = 30.dp)
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     drawScreenBorder(
@@ -81,54 +110,6 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        val settingText =
-            @Composable { text: String, modifier: Modifier ->
-                Text(
-                    text,
-                    modifier = modifier,
-                    color = Color.Black.copy(0.9f),
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Center
-                )
-            }
-
-        // Setting Button
-        Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
-            Row {
-                settingText(stringResource(id = R.string.button_sounds), Modifier.weight(1f))
-                settingText(stringResource(id = R.string.button_pause), Modifier.weight(1f))
-                settingText(stringResource(id = R.string.button_reset), Modifier.weight(1f))
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            Row {
-
-                // SOUNDS
-                GameButton(
-                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                    onClick = { clickable.onMute() },
-                    size = SettingButtonSize
-                ) {}
-
-                // PAUSE
-                GameButton(
-                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                    onClick = { clickable.onPause() },
-                    size = SettingButtonSize
-                ) {}
-
-                // RESET
-                GameButton(
-                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                    onClick = { clickable.onRestart() },
-                    size = SettingButtonSize
-                ) {}
-            }
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
 
         // Game Button
         val buttonText =
