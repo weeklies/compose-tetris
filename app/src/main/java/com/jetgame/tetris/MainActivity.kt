@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
             ComposetetrisTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-
                     val viewModel = viewModel<GameViewModel>()
                     val viewState = viewModel.viewState.value
 
@@ -44,53 +43,44 @@ class MainActivity : ComponentActivity() {
 
                     val lifecycleOwner = LocalLifecycleOwner.current
                     DisposableEffect(key1 = Unit) {
-                        val observer = object : DefaultLifecycleObserver {
-                            override fun onResume(owner: LifecycleOwner) {
-                                viewModel.dispatch(Action.Resume)
-                            }
+                        val observer =
+                            object : DefaultLifecycleObserver {
+                                override fun onResume(owner: LifecycleOwner) {
+                                    viewModel.dispatch(Action.Resume)
+                                }
 
-                            override fun onPause(owner: LifecycleOwner) {
-                                viewModel.dispatch(Action.Pause)
+                                override fun onPause(owner: LifecycleOwner) {
+                                    viewModel.dispatch(Action.Pause)
+                                }
                             }
-                        }
                         lifecycleOwner.lifecycle.addObserver(observer)
-                        onDispose {
-                            lifecycleOwner.lifecycle.removeObserver(observer)
-                        }
+                        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
                     }
 
-
-                    GameBody(combinedClickable(
-                        onMove = { direction: Direction ->
-                            if (direction == Direction.Up) viewModel.dispatch(Action.Drop)
-                            else viewModel.dispatch(Action.Move(direction))
-                        },
-                        onRotate = {
-                            viewModel.dispatch(Action.Rotate)
-                        },
-                        onRestart = {
-                            viewModel.dispatch(Action.Reset)
-                        },
-                        onPause = {
-                            if (viewModel.viewState.value.isRuning) {
-                                viewModel.dispatch(Action.Pause)
-                            } else {
-                                viewModel.dispatch(Action.Resume)
-                            }
-                        },
-                        onMute = {
-                            viewModel.dispatch(Action.Mute)
-                        }
-                    )) {
-                        GameScreen(
-                            Modifier.fillMaxSize()
+                    GameBody(
+                        combinedClickable(
+                            onMove = { direction: Direction ->
+                                if (direction == Direction.Up) viewModel.dispatch(Action.Drop)
+                                else viewModel.dispatch(Action.Move(direction))
+                            },
+                            onRotate = { viewModel.dispatch(Action.Rotate) },
+                            onRestart = { viewModel.dispatch(Action.Reset) },
+                            onPause = {
+                                if (viewModel.viewState.value.isRunning) {
+                                    viewModel.dispatch(Action.Pause)
+                                } else {
+                                    viewModel.dispatch(Action.Resume)
+                                }
+                            },
+                            onMute = { viewModel.dispatch(Action.Mute) }
                         )
+                    ) {
+                        GameScreen(Modifier.fillMaxSize())
                     }
                 }
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -98,13 +88,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    ComposetetrisTheme {
-        GameBody {
-            PreviewGamescreen(Modifier.fillMaxSize())
-        }
-    }
+    ComposetetrisTheme { GameBody { PreviewGamescreen(Modifier.fillMaxSize()) } }
 }
