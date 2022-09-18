@@ -2,16 +2,19 @@ package com.jetgame.tetris.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +26,7 @@ import com.jetgame.tetris.R
 import com.jetgame.tetris.logic.Direction
 import com.jetgame.tetris.ui.theme.BodyColor
 import com.jetgame.tetris.ui.theme.ScreenBackground
+import kotlin.math.absoluteValue
 
 @Composable
 fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () -> Unit) {
@@ -102,10 +106,49 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
                 }
             }
 
+            var swipeDirection = SwipeDirection.None
+
             // Game Display
             Box(
                 Modifier.size(500.dp, 400.dp)
                     .padding(start = 50.dp, end = 50.dp, top = 30.dp, bottom = 30.dp)
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDrag = { change, dragAmount ->
+                                change.consumeAllChanges()
+
+                                val minAmount = 10
+                                val (x, y) = dragAmount
+                                val absX = x.absoluteValue
+                                val absY = y.absoluteValue
+
+                                if (absX < minAmount && absY < minAmount) {
+                                    // This acts as a buffer against accidental swipes.
+                                } else if (absX >= absY) {
+                                    // Prioritise horizontal swipes.
+                                    when {
+                                        x > 0 -> swipeDirection = SwipeDirection.Right
+                                        x < 0 -> swipeDirection = SwipeDirection.Left
+                                    }
+                                } else if (absX < absY) {
+                                    when {
+                                        y > 0 -> swipeDirection = SwipeDirection.Down
+                                        y < 0 -> swipeDirection = SwipeDirection.Up
+                                    }
+                                }
+                            },
+                            onDragEnd = {
+                                when (swipeDirection) {
+                                    SwipeDirection.Right -> clickable.onMove(Direction.Right)
+                                    SwipeDirection.Left -> clickable.onMove(Direction.Left)
+                                    SwipeDirection.Down -> clickable.onMove(Direction.Up)
+                                    SwipeDirection.Up -> clickable.onRotate()
+                                    SwipeDirection.None -> {}
+                                }
+                                swipeDirection = SwipeDirection.None
+                            },
+                        )
+                    }
             ) {
                 Canvas(modifier = Modifier.fillMaxSize()) {
                     drawScreenBorder(
@@ -208,6 +251,14 @@ fun DrawScope.drawScreenBorder(
         }
 
     drawPath(path, Color.White.copy(0.5f))
+}
+
+private enum class SwipeDirection {
+    Left,
+    Right,
+    Up,
+    Down,
+    None,
 }
 
 data class Clickable
