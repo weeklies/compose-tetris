@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Tetris</string>
-    <string name="body_label">TETRIS</string>
-    <string name="game_over_hint">GAME OVER</string>
+    <string name="app_name">Tetrominot</string>
+    <string name="body_label">Tetrominot</string>
+    <string name="game_over_hint">Game Over</string>
     <string name="button_rotate">ROTATE</string>
     <string name="button_up">▲</string>
     <string name="button_left">◀</string>
