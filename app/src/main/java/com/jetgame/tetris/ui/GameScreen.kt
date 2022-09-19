@@ -56,14 +56,12 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 @ObsoleteCoroutinesApi
 @Composable
-fun GameScreen(modifier: Modifier = Modifier) {
+fun GameScreen() {
 
     val viewModel = viewModel<GameViewModel>()
     val viewState = viewModel.viewState.value
 
-    Box(
-        modifier.background(Color.Black).padding(1.dp).background(ScreenBackground).padding(10.dp)
-    ) {
+    Box {
         val animateValue by
             rememberInfiniteTransition()
                 .animateFloat(
@@ -254,7 +252,7 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
 
 @Preview
 @Composable
-fun PreviewGamescreen(modifier: Modifier = Modifier.width(260.dp).height(300.dp)) {
+fun PreviewGameScreen(modifier: Modifier = Modifier.width(260.dp).height(300.dp)) {
 
     Box(
         modifier.background(Color.Black).padding(1.dp).background(ScreenBackground).padding(10.dp)

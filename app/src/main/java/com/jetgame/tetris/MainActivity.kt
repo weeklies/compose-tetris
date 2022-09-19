@@ -15,7 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jetgame.tetris.logic.*
 import com.jetgame.tetris.ui.GameBody
 import com.jetgame.tetris.ui.GameScreen
-import com.jetgame.tetris.ui.PreviewGamescreen
+import com.jetgame.tetris.ui.PreviewGameScreen
 import com.jetgame.tetris.ui.combinedClickable
 import com.jetgame.tetris.ui.theme.ComposetetrisTheme
 import kotlinx.coroutines.delay
@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             onMute = { viewModel.dispatch(Action.Mute) }
                         )
                     ) {
-                        GameScreen(Modifier.fillMaxSize())
+                        GameScreen()
                     }
                 }
             }
@@ -91,5 +91,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    ComposetetrisTheme { GameBody { PreviewGamescreen(Modifier.fillMaxSize()) } }
+    ComposetetrisTheme { GameBody { PreviewGameScreen(Modifier.fillMaxSize()) } }
 }

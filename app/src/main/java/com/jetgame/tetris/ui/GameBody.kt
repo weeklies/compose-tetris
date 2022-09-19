@@ -1,6 +1,5 @@
 package com.jetgame.tetris.ui
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
@@ -9,10 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -32,9 +28,7 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
 
     // Screen
     Column(
-        Modifier.fillMaxSize()
-            .background(Color.Black)
-            .background(BodyColor, RoundedCornerShape(10.dp)),
+        Modifier.fillMaxSize().background(BodyColor, RoundedCornerShape(10.dp)),
         verticalArrangement = Arrangement.Center,
     ) {
         // Setting Button
@@ -149,50 +143,11 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
                     )
                 }
         ) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawScreenBorder(
-                    Offset(0f, 0f),
-                    Offset(size.width, 0f),
-                    Offset(0f, size.height),
-                    Offset(size.width, size.height)
-                )
-            }
-
             Box(modifier = Modifier.fillMaxSize().padding(6.dp).background(ScreenBackground)) {
                 screen()
             }
         }
     }
-}
-
-fun DrawScope.drawScreenBorder(
-    topLef: Offset,
-    topRight: Offset,
-    bottomLeft: Offset,
-    bottomRight: Offset
-) {
-    var path =
-        Path().apply {
-            moveTo(topLef.x, topLef.y)
-            lineTo(topRight.x, topRight.y)
-            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
-            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
-            lineTo(bottomLeft.x, bottomLeft.y)
-            close()
-        }
-    drawPath(path, Color.Black.copy(0.5f))
-
-    path =
-        Path().apply {
-            moveTo(bottomRight.x, bottomRight.y)
-            lineTo(bottomLeft.x, bottomLeft.y)
-            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
-            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
-            lineTo(topRight.x, topRight.y)
-            close()
-        }
-
-    drawPath(path, Color.White.copy(0.5f))
 }
 
 private enum class SwipeDirection {
