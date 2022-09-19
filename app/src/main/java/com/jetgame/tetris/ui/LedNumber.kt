@@ -33,26 +33,28 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
-
 @Composable
 fun LedClock(modifier: Modifier = Modifier) {
 
-    val animateValue by rememberInfiniteTransition().animateFloat(
-        initialValue = 0f, targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        ),
-    )
+    val animateValue by
+        rememberInfiniteTransition()
+            .animateFloat(
+                initialValue = 0f,
+                targetValue = 1f,
+                animationSpec =
+                    infiniteRepeatable(
+                        animation = tween(durationMillis = 1000, easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart,
+                    ),
+            )
 
     var clock by remember { mutableStateOf(0 to 0) }
 
     DisposableEffect(key1 = animateValue.roundToInt()) {
-        @SuppressLint("SimpleDateFormat")
-        val dateFormat: DateFormat = SimpleDateFormat("H,m")
+        @SuppressLint("SimpleDateFormat") val dateFormat: DateFormat = SimpleDateFormat("H,m")
         val (curHou, curMin) = dateFormat.format(Date()).split(",")
         clock = curHou.toInt() to curMin.toInt()
-        onDispose { }
+        onDispose {}
     }
 
     Row(modifier) {
@@ -72,33 +74,23 @@ fun LedClock(modifier: Modifier = Modifier) {
         }
 
         Box(
-            modifier = Modifier
-                .width(6.dp)
-                .padding(end = 1.dp),
+            modifier = Modifier.width(6.dp).padding(end = 1.dp),
         ) {
-
             LedComma(BrickMatrix)
             if (animateValue.roundToInt() == 1) {
                 LedComma(BrickSpirit)
             }
-
         }
 
         LedNumber(num = clock.second, digits = 2, fillZero = true)
     }
-
 }
 
 @Composable
-fun LedNumber(
-    modifier: Modifier = Modifier,
-    num: Int,
-    digits: Int,
-    fillZero: Boolean = false
-) {
+fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Boolean = false) {
     val textSize = 16.sp
     val textWidth = 8.dp
-    Box(modifier) {
+    Box(modifier.padding(horizontal = 12.dp)) {
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
             repeat(digits) {
                 Text(
@@ -108,10 +100,8 @@ fun LedNumber(
                     fontFamily = LedFontFamily,
                     modifier = Modifier.width(textWidth),
                     textAlign = TextAlign.End
-
                 )
             }
-
         }
         Row(
             modifier = Modifier.align(Alignment.CenterEnd),
@@ -125,11 +115,8 @@ fun LedNumber(
                     fontFamily = LedFontFamily,
                     modifier = Modifier.width(textWidth),
                     textAlign = TextAlign.End
-
                 )
             }
-
         }
-
     }
 }
