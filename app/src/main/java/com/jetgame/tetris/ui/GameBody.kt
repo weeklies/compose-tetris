@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,12 +34,21 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
     Column(
         Modifier.fillMaxSize()
             .background(Color.Black)
-            .background(BodyColor, RoundedCornerShape(10.dp))
-            .padding(top = 20.dp),
+            .background(BodyColor, RoundedCornerShape(10.dp)),
         verticalArrangement = Arrangement.Center,
     ) {
         // Setting Button
         Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
+            Text(
+                stringResource(id = R.string.body_label),
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             val settingText =
                 @Composable { text: String, modifier: Modifier ->
                     Text(
@@ -48,21 +56,10 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
                         modifier = modifier,
                         color = Color.Black.copy(0.9f),
                         fontSize = 12.sp,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Medium,
                     )
                 }
-
-            Text(
-                stringResource(id = R.string.body_label),
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                textAlign = TextAlign.Center,
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
             Row {
                 settingText(
                     stringResource(id = R.string.button_sounds),
