@@ -31,6 +31,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () -> Unit) {
 
+    // Screen
     Column(
         Modifier.fillMaxSize()
             .background(Color.Black)
@@ -38,186 +39,130 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
             .padding(top = 20.dp),
         verticalArrangement = Arrangement.Center,
     ) {
-        // Screen
-        Column {
-            // Setting Button
-            Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
-                val settingText =
-                    @Composable { text: String, modifier: Modifier ->
-                        Text(
-                            text,
-                            modifier = modifier,
-                            color = Color.Black.copy(0.9f),
-                            fontSize = 12.sp,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+        // Setting Button
+        Column(modifier = Modifier.padding(start = 40.dp, end = 40.dp)) {
+            val settingText =
+                @Composable { text: String, modifier: Modifier ->
+                    Text(
+                        text,
+                        modifier = modifier,
+                        color = Color.Black.copy(0.9f),
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
-                Text(
-                    stringResource(id = R.string.body_label),
-                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
-                    textAlign = TextAlign.Center,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+            Text(
+                stringResource(id = R.string.body_label),
+                modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                textAlign = TextAlign.Center,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Row {
+                settingText(
+                    stringResource(id = R.string.button_sounds),
+                    Modifier.weight(1f),
                 )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Row {
-                    settingText(
-                        stringResource(id = R.string.button_sounds),
-                        Modifier.weight(1f),
-                    )
-                    settingText(
-                        stringResource(id = R.string.button_pause),
-                        Modifier.weight(1f),
-                    )
-                    settingText(
-                        stringResource(id = R.string.button_reset),
-                        Modifier.weight(1f),
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(5.dp))
-
-                Row {
-
-                    // SOUNDS
-                    GameButton(
-                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                        onClick = { clickable.onMute() },
-                        size = SettingButtonSize
-                    ) {}
-
-                    // PAUSE
-                    GameButton(
-                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                        onClick = { clickable.onPause() },
-                        size = SettingButtonSize
-                    ) {}
-
-                    // RESET
-                    GameButton(
-                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                        onClick = { clickable.onRestart() },
-                        size = SettingButtonSize
-                    ) {}
-                }
+                settingText(
+                    stringResource(id = R.string.button_pause),
+                    Modifier.weight(1f),
+                )
+                settingText(
+                    stringResource(id = R.string.button_reset),
+                    Modifier.weight(1f),
+                )
             }
 
-            var swipeDirection = SwipeDirection.None
+            Spacer(modifier = Modifier.height(5.dp))
 
-            // Game Display
-            Box(
-                Modifier.size(500.dp, 400.dp)
-                    .padding(start = 50.dp, end = 50.dp, top = 30.dp, bottom = 30.dp)
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDrag = { change, dragAmount ->
-                                change.consumeAllChanges()
+            Row {
 
-                                val minAmount = 10
-                                val (x, y) = dragAmount
-                                val absX = x.absoluteValue
-                                val absY = y.absoluteValue
+                // SOUNDS
+                GameButton(
+                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
+                    onClick = { clickable.onMute() },
+                    size = SettingButtonSize
+                )
 
-                                if (absX < minAmount && absY < minAmount) {
-                                    // This acts as a buffer against accidental swipes.
-                                } else if (absX >= absY) {
-                                    // Prioritise horizontal swipes.
-                                    when {
-                                        x > 0 -> swipeDirection = SwipeDirection.Right
-                                        x < 0 -> swipeDirection = SwipeDirection.Left
-                                    }
-                                } else if (absX < absY) {
-                                    when {
-                                        y > 0 -> swipeDirection = SwipeDirection.Down
-                                        y < 0 -> swipeDirection = SwipeDirection.Up
-                                    }
-                                }
-                            },
-                            onDragEnd = {
-                                when (swipeDirection) {
-                                    SwipeDirection.Right -> clickable.onMove(Direction.Right)
-                                    SwipeDirection.Left -> clickable.onMove(Direction.Left)
-                                    SwipeDirection.Down -> clickable.onMove(Direction.Up)
-                                    SwipeDirection.Up -> clickable.onRotate()
-                                    SwipeDirection.None -> {}
-                                }
-                                swipeDirection = SwipeDirection.None
-                            },
-                        )
-                    }
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawScreenBorder(
-                        Offset(0f, 0f),
-                        Offset(size.width, 0f),
-                        Offset(0f, size.height),
-                        Offset(size.width, size.height)
-                    )
-                }
+                // PAUSE
+                GameButton(
+                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
+                    onClick = { clickable.onPause() },
+                    size = SettingButtonSize
+                )
 
-                Box(modifier = Modifier.fillMaxSize().padding(6.dp).background(ScreenBackground)) {
-                    screen()
-                }
+                // RESET
+                GameButton(
+                    modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
+                    onClick = { clickable.onRestart() },
+                    size = SettingButtonSize
+                )
             }
         }
 
-        // Game Button
-        val buttonText =
-            @Composable { modifier: Modifier, text: String ->
-                Text(text, modifier = modifier, color = Color.White.copy(0.9f), fontSize = 18.sp)
+        var swipeDirection = SwipeDirection.None
+
+        // Game Display
+        Box(
+            Modifier.size(
+                    400.dp,
+                    500.dp,
+                )
+                .padding(top = 30.dp)
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDrag = { change, dragAmount ->
+                            change.consumeAllChanges()
+
+                            val minAmount = 10
+                            val (x, y) = dragAmount
+                            val absX = x.absoluteValue
+                            val absY = y.absoluteValue
+
+                            if (absX < minAmount && absY < minAmount) {
+                                // This acts as a buffer against accidental swipes.
+                            } else if (absX >= absY) {
+                                // Prioritise horizontal swipes.
+                                when {
+                                    x > 0 -> swipeDirection = SwipeDirection.Right
+                                    x < 0 -> swipeDirection = SwipeDirection.Left
+                                }
+                            } else {
+                                when {
+                                    y > 0 -> swipeDirection = SwipeDirection.Down
+                                    y < 0 -> swipeDirection = SwipeDirection.Up
+                                }
+                            }
+                        },
+                        onDragEnd = {
+                            when (swipeDirection) {
+                                SwipeDirection.Right -> clickable.onMove(Direction.Right)
+                                SwipeDirection.Left -> clickable.onMove(Direction.Left)
+                                SwipeDirection.Down -> clickable.onMove(Direction.Up)
+                                SwipeDirection.Up -> clickable.onRotate()
+                                SwipeDirection.None -> {}
+                            }
+                            swipeDirection = SwipeDirection.None
+                        },
+                    )
+                }
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawScreenBorder(
+                    Offset(0f, 0f),
+                    Offset(size.width, 0f),
+                    Offset(0f, size.height),
+                    Offset(size.width, size.height)
+                )
             }
 
-        Row(modifier = Modifier.padding(start = 40.dp, end = 40.dp).height(160.dp)) {
-            // DIRECTION BTN
-            Box(modifier = Modifier.fillMaxHeight().weight(1f)) {
-                GameButton(
-                    Modifier.align(Alignment.TopCenter),
-                    onClick = { clickable.onMove(Direction.Up) },
-                    autoInvokeWhenPressed = false,
-                    size = DirectionButtonSize
-                ) {
-                    buttonText(it, stringResource(id = R.string.button_up))
-                }
-                GameButton(
-                    Modifier.align(Alignment.CenterStart),
-                    onClick = { clickable.onMove(Direction.Left) },
-                    autoInvokeWhenPressed = true,
-                    size = DirectionButtonSize
-                ) {
-                    buttonText(it, stringResource(id = R.string.button_left))
-                }
-                GameButton(
-                    Modifier.align(Alignment.CenterEnd),
-                    onClick = { clickable.onMove(Direction.Right) },
-                    autoInvokeWhenPressed = true,
-                    size = DirectionButtonSize
-                ) {
-                    buttonText(it, stringResource(id = R.string.button_right))
-                }
-                GameButton(
-                    Modifier.align(Alignment.BottomCenter),
-                    onClick = { clickable.onMove(Direction.Down) },
-                    autoInvokeWhenPressed = true,
-                    size = DirectionButtonSize
-                ) {
-                    buttonText(it, stringResource(id = R.string.button_down))
-                }
-            }
-
-            // ROTATE BTN
-            Box(modifier = Modifier.weight(1f).fillMaxHeight()) {
-                GameButton(
-                    Modifier.align(Alignment.CenterEnd),
-                    onClick = { clickable.onRotate() },
-                    autoInvokeWhenPressed = false,
-                    size = RotateButtonSize
-                ) {
-                    buttonText(it, stringResource(id = R.string.button_rotate))
-                }
+            Box(modifier = Modifier.fillMaxSize().padding(6.dp).background(ScreenBackground)) {
+                screen()
             }
         }
     }
@@ -284,6 +229,4 @@ fun PreviewGameBody() {
     GameBody {}
 }
 
-val DirectionButtonSize = 60.dp
-val RotateButtonSize = 90.dp
 val SettingButtonSize = 15.dp
