@@ -69,30 +69,22 @@ fun GameScreen(modifier: Modifier = Modifier) {
             line = viewState.line,
             level = viewState.level,
             isMute = viewState.isMute,
-            isPaused = viewState.isPaused
+            isPaused = viewState.isPaused,
         )
 
-        Box(modifier.background(ScreenBackground).padding(11.dp)) {
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                val screenWidth = size.width
-                val brickSize =
-                    min(screenWidth / viewState.matrix.first, size.height / viewState.matrix.second)
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val screenWidth = size.width
+            val brickSize =
+                min(screenWidth / viewState.matrix.first, size.height / viewState.matrix.second)
 
-                // This is used to center the Game Display, along with screenWidth.
-                val leftOffset = (screenWidth / brickSize - viewState.matrix.first) / 2
+            // This is used to center the Game Display, along with screenWidth.
+            val leftOffset = (screenWidth / brickSize - viewState.matrix.first) / 2
 
-                drawMatrix(brickSize, viewState.matrix, leftOffset)
-                drawMatrixBorder(brickSize, viewState.matrix, screenWidth)
-                drawBricks(viewState.bricks, brickSize, viewState.matrix, leftOffset)
-                drawSpirit(viewState.spirit, brickSize, viewState.matrix, leftOffset)
-                drawText(
-                    viewState.gameStatus,
-                    brickSize,
-                    viewState.matrix,
-                    animateValue,
-                    screenWidth
-                )
-            }
+            drawMatrix(brickSize, viewState.matrix, leftOffset)
+            drawMatrixBorder(brickSize, viewState.matrix, leftOffset * brickSize)
+            drawBricks(viewState.bricks, brickSize, viewState.matrix, leftOffset)
+            drawSpirit(viewState.spirit, brickSize, viewState.matrix, leftOffset)
+            drawText(viewState.gameStatus, brickSize, viewState.matrix, animateValue, screenWidth)
         }
     }
 }
@@ -100,7 +92,6 @@ fun GameScreen(modifier: Modifier = Modifier) {
 @Composable
 fun GameScoreboard(
     modifier: Modifier = Modifier,
-    brickSize: Float = 35f,
     spirit: Spirit,
     score: Int = 0,
     line: Int = 0,
@@ -109,7 +100,7 @@ fun GameScoreboard(
     isPaused: Boolean = false
 ) {
     Column(
-        modifier.fillMaxWidth().padding(10.dp),
+        modifier.fillMaxWidth().padding(vertical = 10.dp),
     ) {
         Row {
             Image(
@@ -127,10 +118,7 @@ fun GameScoreboard(
         val margin = 12.dp
         Spacer(modifier = Modifier.width(margin))
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             val textSize = 12.sp
             Text("Score", fontSize = textSize)
             LedNumber(num = score, digits = 6)
@@ -145,8 +133,10 @@ fun GameScoreboard(
             Spacer(modifier = Modifier.width(margin))
 
             Canvas(modifier = Modifier.fillMaxWidth().align(Alignment.Top)) {
+                val brickSize = size.width / NextMatrix.first
+
                 drawMatrix(brickSize, NextMatrix)
-                drawSpirit(spirit.adjustOffset(NextMatrix), brickSize = brickSize, NextMatrix)
+                drawSpirit(spirit.adjustOffset(NextMatrix), brickSize, NextMatrix)
             }
         }
     }
@@ -206,14 +196,14 @@ private fun DrawScope.drawMatrix(
 private fun DrawScope.drawMatrixBorder(
     brickSize: Float,
     matrix: Pair<Int, Int>,
-    screenWidth: Float
+    leftOffset: Float
 ) {
 
     val gap = matrix.first * brickSize * 0.05f
     drawRect(
         Color.Black,
         size = Size(matrix.first * brickSize + gap, matrix.second * brickSize + gap),
-        topLeft = Offset((screenWidth - gap) / 4 - gap / 2, -gap / 2),
+        topLeft = Offset(leftOffset - gap / 2, -gap / 2),
         style = Stroke(0.8.dp.toPx())
     )
 }
