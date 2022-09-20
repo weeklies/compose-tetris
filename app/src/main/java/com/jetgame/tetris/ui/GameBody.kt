@@ -100,12 +100,10 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
 
         // Game Display
         Box(
-            Modifier.padding(20.dp)
+            Modifier.padding(16.dp)
                 .fillMaxWidth()
                 .height(600.dp)
-                .padding(top = 30.dp)
                 .background(ScreenBackground)
-                .padding(5.dp)
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDrag = { change, dragAmount ->

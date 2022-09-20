@@ -72,6 +72,8 @@ fun GameScreen(modifier: Modifier = Modifier) {
             isPaused = viewState.isPaused,
         )
 
+        Spacer(Modifier.height(16.dp))
+
         Canvas(modifier = Modifier.fillMaxSize()) {
             val screenWidth = size.width
             val brickSize =
