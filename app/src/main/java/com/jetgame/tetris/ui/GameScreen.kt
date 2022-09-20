@@ -206,7 +206,7 @@ private fun DrawScope.drawMatrixBorder(
         Color.Black,
         size = Size(matrix.first * brickSize + gap, matrix.second * brickSize + gap),
         topLeft = Offset(leftOffset - gap / 2, -gap / 2),
-        style = Stroke(0.8.dp.toPx())
+        style = Stroke(1.dp.toPx())
     )
 }
 

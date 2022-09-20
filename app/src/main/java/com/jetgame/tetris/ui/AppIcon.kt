@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -91,4 +93,37 @@ private fun AppIcon() {
 @Composable
 private fun PreviewAppIcon() {
     AppIcon()
+}
+
+private val DirectionButtonSize = 60.dp
+private val RotateButtonSize = 90.dp
+
+private fun DrawScope.drawScreenBorder(
+    topLef: Offset,
+    topRight: Offset,
+    bottomLeft: Offset,
+    bottomRight: Offset
+) {
+    var path =
+        Path().apply {
+            moveTo(topLef.x, topLef.y)
+            lineTo(topRight.x, topRight.y)
+            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
+            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
+            lineTo(bottomLeft.x, bottomLeft.y)
+            close()
+        }
+    drawPath(path, Color.Black.copy(0.5f))
+
+    path =
+        Path().apply {
+            moveTo(bottomRight.x, bottomRight.y)
+            lineTo(bottomLeft.x, bottomLeft.y)
+            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
+            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
+            lineTo(topRight.x, topRight.y)
+            close()
+        }
+
+    drawPath(path, Color.White.copy(0.5f))
 }
