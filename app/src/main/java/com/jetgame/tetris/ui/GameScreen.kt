@@ -47,7 +47,7 @@ fun GameScreen(modifier: Modifier = Modifier) {
     val viewModel = viewModel<GameViewModel>()
     val viewState = viewModel.viewState.value
 
-    Column {
+    Column(modifier = modifier) {
         val animateValue by
             rememberInfiniteTransition()
                 .animateFloat(
@@ -74,14 +74,24 @@ fun GameScreen(modifier: Modifier = Modifier) {
 
         Box(modifier.background(ScreenBackground).padding(11.dp)) {
             Canvas(modifier = Modifier.fillMaxSize()) {
+                val screenWidth = size.width
                 val brickSize =
-                    min(size.width / viewState.matrix.first, size.height / viewState.matrix.second)
+                    min(screenWidth / viewState.matrix.first, size.height / viewState.matrix.second)
 
-                drawMatrix(brickSize, viewState.matrix)
-                drawMatrixBorder(brickSize, viewState.matrix)
-                drawBricks(viewState.bricks, brickSize, viewState.matrix)
-                drawSpirit(viewState.spirit, brickSize, viewState.matrix)
-                drawText(viewState.gameStatus, brickSize, viewState.matrix, animateValue)
+                // This is used to center the Game Display, along with screenWidth.
+                val leftOffset = (screenWidth / brickSize - viewState.matrix.first) / 2
+
+                drawMatrix(brickSize, viewState.matrix, leftOffset)
+                drawMatrixBorder(brickSize, viewState.matrix, screenWidth)
+                drawBricks(viewState.bricks, brickSize, viewState.matrix, leftOffset)
+                drawSpirit(viewState.spirit, brickSize, viewState.matrix, leftOffset)
+                drawText(
+                    viewState.gameStatus,
+                    brickSize,
+                    viewState.matrix,
+                    animateValue,
+                    screenWidth
+                )
             }
         }
     }
@@ -147,15 +157,16 @@ private fun DrawScope.drawText(
     brickSize: Float,
     matrix: Pair<Int, Int>,
     alpha: Float,
+    screenWidth: Float
 ) {
 
-    val center = Offset(brickSize * matrix.first / 2, brickSize * matrix.second / 2)
+    val centerY = brickSize * matrix.second / 2
     val drawText = { text: String, size: Float ->
         drawIntoCanvas {
             it.nativeCanvas.drawText(
                 text,
-                center.x,
-                center.y,
+                screenWidth / 2,
+                centerY,
                 Paint().apply {
                     color = Color.Black.copy(alpha = alpha).toArgb()
                     textSize = size
@@ -173,34 +184,79 @@ private fun DrawScope.drawText(
     }
 }
 
-private fun DrawScope.drawMatrix(brickSize: Float, matrix: Pair<Int, Int>) {
+private fun DrawScope.drawMatrix(
+    brickSize: Float,
+    matrix: Pair<Int, Int>,
+    leftOffset: Float = 0f,
+) {
     (0 until matrix.first).forEach { x ->
         (0 until matrix.second).forEach { y ->
-            drawBrick(brickSize, Offset(x.toFloat(), y.toFloat()), BrickMatrix)
+            drawBrick(
+                brickSize,
+                Offset(
+                    x.toFloat() + leftOffset,
+                    y.toFloat(),
+                ),
+                BrickMatrix
+            )
         }
     }
 }
 
-private fun DrawScope.drawMatrixBorder(brickSize: Float, matrix: Pair<Int, Int>) {
+private fun DrawScope.drawMatrixBorder(
+    brickSize: Float,
+    matrix: Pair<Int, Int>,
+    screenWidth: Float
+) {
 
     val gap = matrix.first * brickSize * 0.05f
     drawRect(
         Color.Black,
         size = Size(matrix.first * brickSize + gap, matrix.second * brickSize + gap),
-        topLeft = Offset(-gap / 2, -gap / 2),
-        style = Stroke(1.dp.toPx())
+        topLeft = Offset((screenWidth - gap) / 4 - gap / 2, -gap / 2),
+        style = Stroke(0.8.dp.toPx())
     )
 }
 
-private fun DrawScope.drawBricks(brick: List<Brick>, brickSize: Float, matrix: Pair<Int, Int>) {
-    clipRect(0f, 0f, matrix.first * brickSize, matrix.second * brickSize) {
-        brick.forEach { drawBrick(brickSize, it.location, BrickSpirit) }
+private fun DrawScope.drawBricks(
+    brick: List<Brick>,
+    brickSize: Float,
+    matrix: Pair<Int, Int>,
+    leftOffset: Float = 0f
+) {
+    clipRect(0f, 0f, bottom = matrix.second * brickSize) {
+        brick.forEach {
+            val (x, y) = it.location
+
+            drawBrick(
+                brickSize,
+                Offset(
+                    x + leftOffset,
+                    y,
+                ),
+                BrickSpirit
+            )
+        }
     }
 }
 
-private fun DrawScope.drawSpirit(spirit: Spirit, brickSize: Float, matrix: Pair<Int, Int>) {
-    clipRect(0f, 0f, matrix.first * brickSize, matrix.second * brickSize) {
-        spirit.location.forEach { drawBrick(brickSize, Offset(it.x, it.y), BrickSpirit) }
+private fun DrawScope.drawSpirit(
+    spirit: Spirit,
+    brickSize: Float,
+    matrix: Pair<Int, Int>,
+    leftOffset: Float = 0f
+) {
+    clipRect(0f, 0f, bottom = matrix.second * brickSize) {
+        spirit.location.forEach {
+            drawBrick(
+                brickSize,
+                Offset(
+                    it.x + leftOffset,
+                    it.y,
+                ),
+                BrickSpirit
+            )
+        }
     }
 }
 
@@ -229,7 +285,7 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
 }
 
 @Composable
-fun PreviewGameScreen(modifier: Modifier = Modifier.width(260.dp).height(300.dp)) {
+fun PreviewGameScreen(modifier: Modifier = Modifier) {
     GameScreen(modifier)
 }
 
