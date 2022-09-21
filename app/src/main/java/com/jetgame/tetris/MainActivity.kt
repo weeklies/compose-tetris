@@ -24,7 +24,6 @@ import kotlinx.coroutines.isActive
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        StatusBarUtil.transparentStatusBar(this)
         SoundUtil.init(this)
 
         setContent {

@@ -23,7 +23,7 @@ fun GameBody(interactive: Interactive = combinedInteractive(), screen: @Composab
 
     // Screen
     Column(
-        Modifier.fillMaxSize().background(BodyColor, RoundedCornerShape(10.dp)),
+        Modifier.fillMaxSize().background(BodyColor),
         verticalArrangement = Arrangement.Center,
     ) {
         // Setting Button
