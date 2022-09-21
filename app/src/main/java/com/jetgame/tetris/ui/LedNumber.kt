@@ -90,7 +90,7 @@ fun LedClock(modifier: Modifier = Modifier) {
 fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Boolean = false) {
     val textSize = 16.sp
     val textWidth = 8.dp
-    Box(modifier.padding(horizontal = 12.dp)) {
+    Box(modifier.padding(horizontal = 6.dp)) {
         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
             repeat(digits) {
                 Text(

@@ -1,7 +1,6 @@
 package com.jetgame.tetris.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -9,8 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.consumeAllChanges
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -20,11 +17,9 @@ import androidx.compose.ui.unit.sp
 import com.jetgame.tetris.R
 import com.jetgame.tetris.logic.Direction
 import com.jetgame.tetris.ui.theme.BodyColor
-import com.jetgame.tetris.ui.theme.ScreenBackground
-import kotlin.math.absoluteValue
 
 @Composable
-fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () -> Unit) {
+fun GameBody(interactive: Interactive = combinedInteractive(), screen: @Composable (Interactive) -> Unit) {
 
     // Screen
     Column(
@@ -76,86 +71,32 @@ fun GameBody(clickable: Clickable = combinedClickable(), screen: @Composable () 
                 // SOUNDS
                 GameButton(
                     modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                    onClick = { clickable.onMute() },
+                    onClick = { interactive.onMute() },
                     size = SettingButtonSize
                 )
 
                 // PAUSE
                 GameButton(
                     modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                    onClick = { clickable.onPause() },
+                    onClick = { interactive.onPause() },
                     size = SettingButtonSize
                 )
 
                 // RESET
                 GameButton(
                     modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp),
-                    onClick = { clickable.onRestart() },
+                    onClick = { interactive.onRestart() },
                     size = SettingButtonSize
                 )
             }
         }
 
-        var swipeDirection = SwipeDirection.None
-
         // Game Display
-        Box(
-            Modifier.padding(16.dp)
-                .fillMaxWidth()
-                .height(600.dp)
-                .background(ScreenBackground)
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDrag = { change, dragAmount ->
-                            change.consumeAllChanges()
-
-                            val minAmount = 10
-                            val (x, y) = dragAmount
-                            val absX = x.absoluteValue
-                            val absY = y.absoluteValue
-
-                            if (absX < minAmount && absY < minAmount) {
-                                // This acts as a buffer against accidental swipes.
-                            } else if (absX >= absY) {
-                                // Prioritise horizontal swipes.
-                                when {
-                                    x > 0 -> swipeDirection = SwipeDirection.Right
-                                    x < 0 -> swipeDirection = SwipeDirection.Left
-                                }
-                            } else {
-                                when {
-                                    y > 0 -> swipeDirection = SwipeDirection.Down
-                                    y < 0 -> swipeDirection = SwipeDirection.Up
-                                }
-                            }
-                        },
-                        onDragEnd = {
-                            when (swipeDirection) {
-                                SwipeDirection.Right -> clickable.onMove(Direction.Right)
-                                SwipeDirection.Left -> clickable.onMove(Direction.Left)
-                                SwipeDirection.Down -> clickable.onMove(Direction.Up)
-                                SwipeDirection.Up -> clickable.onRotate()
-                                SwipeDirection.None -> {}
-                            }
-                            swipeDirection = SwipeDirection.None
-                        },
-                    )
-                }
-        ) {
-            screen()
-        }
+        Box(Modifier.padding(16.dp).fillMaxWidth().height(600.dp)) { screen(interactive) }
     }
 }
 
-private enum class SwipeDirection {
-    Left,
-    Right,
-    Up,
-    Down,
-    None,
-}
-
-data class Clickable
+data class Interactive
 constructor(
     val onMove: (Direction) -> Unit,
     val onRotate: () -> Unit,
@@ -164,13 +105,13 @@ constructor(
     val onMute: () -> Unit
 )
 
-fun combinedClickable(
+fun combinedInteractive(
     onMove: (Direction) -> Unit = {},
     onRotate: () -> Unit = {},
     onRestart: () -> Unit = {},
     onPause: () -> Unit = {},
     onMute: () -> Unit = {}
-) = Clickable(onMove, onRotate, onRestart, onPause, onMute)
+) = Interactive(onMove, onRotate, onRestart, onPause, onMute)
 
 @Preview(widthDp = 400, heightDp = 700)
 @Composable

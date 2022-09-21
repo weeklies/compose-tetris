@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,23 +27,25 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jetgame.tetris.R
 import com.jetgame.tetris.logic.*
+import com.jetgame.tetris.logic.Direction.*
 import com.jetgame.tetris.ui.theme.BrickMatrix
 import com.jetgame.tetris.ui.theme.BrickSpirit
 import com.jetgame.tetris.ui.theme.ScreenBackground
+import kotlin.math.absoluteValue
 import kotlin.math.min
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 
 @ObsoleteCoroutinesApi
-@Preview(showBackground = true)
 @Composable
-fun GameScreen(modifier: Modifier = Modifier) {
+fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
 
     val viewModel = viewModel<GameViewModel>()
     val viewState = viewModel.viewState.value
@@ -74,7 +77,48 @@ fun GameScreen(modifier: Modifier = Modifier) {
 
         Spacer(Modifier.height(16.dp))
 
-        Canvas(modifier = Modifier.fillMaxSize()) {
+        var swipeDirection = SwipeDirection.None
+
+        Canvas(
+            modifier =
+                Modifier.fillMaxSize().pointerInput(Unit) {
+                    detectDragGestures(
+                        onDrag = { change, dragAmount ->
+                            change.consumeAllChanges()
+
+                            val minAmount = 10
+                            val (x, y) = dragAmount
+                            val absX = x.absoluteValue
+                            val absY = y.absoluteValue
+
+                            if (absX < minAmount && absY < minAmount) {
+                                // This acts as a buffer against accidental swipes.
+                            } else if (absX >= absY) {
+                                // Prioritise horizontal swipes.
+                                when {
+                                    x > 0 -> swipeDirection = SwipeDirection.Right
+                                    x < 0 -> swipeDirection = SwipeDirection.Left
+                                }
+                            } else {
+                                when {
+                                    y > 0 -> swipeDirection = SwipeDirection.Down
+                                    y < 0 -> swipeDirection = SwipeDirection.Up
+                                }
+                            }
+                        },
+                        onDragEnd = {
+                            when (swipeDirection) {
+                                SwipeDirection.Right -> interactive.onMove(Right)
+                                SwipeDirection.Left -> interactive.onMove(Left)
+                                SwipeDirection.Down -> interactive.onMove(Up)
+                                SwipeDirection.Up -> interactive.onRotate()
+                                SwipeDirection.None -> {}
+                            }
+                            swipeDirection = SwipeDirection.None
+                        },
+                    )
+                }
+        ) {
             val screenWidth = size.width
             val brickSize =
                 min(screenWidth / viewState.matrix.first, size.height / viewState.matrix.second)
@@ -103,6 +147,7 @@ fun GameScoreboard(
 ) {
     Column(
         modifier.fillMaxWidth().padding(vertical = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row {
             Image(
@@ -117,26 +162,27 @@ fun GameScoreboard(
             )
         }
 
-        val margin = 12.dp
-        Spacer(modifier = Modifier.width(margin))
+        Spacer(modifier = Modifier.height(6.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val textSize = 12.sp
-            Text("Score", fontSize = textSize)
+            Text("Score")
             LedNumber(num = score, digits = 6)
 
-            Text("Lines", fontSize = textSize)
+            Text("Lines")
             LedNumber(num = line, digits = 6)
 
-            Text("Level", fontSize = textSize)
+            Text("Level")
             LedNumber(num = level, digits = 1)
+        }
 
-            Text("Next", fontSize = textSize)
-            Spacer(modifier = Modifier.width(margin))
+        Spacer(modifier = Modifier.height(6.dp))
 
-            Canvas(modifier = Modifier.fillMaxWidth().align(Alignment.Top)) {
-                val brickSize = size.width / NextMatrix.first
+        Row(Modifier.size(100.dp, 25.dp)) {
+            Text("Next")
+            Spacer(modifier = Modifier.width(6.dp))
 
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val brickSize = min(size.width / NextMatrix.first, size.height / NextMatrix.second)
                 drawMatrix(brickSize, NextMatrix)
                 drawSpirit(spirit.adjustOffset(NextMatrix), brickSize, NextMatrix)
             }
@@ -278,7 +324,7 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
 
 @Composable
 fun PreviewGameScreen(modifier: Modifier = Modifier) {
-    GameScreen(modifier)
+    GameScreen(modifier, combinedInteractive())
 }
 
 @Preview
@@ -296,4 +342,12 @@ fun PreviewSpiritType() {
             }
         }
     }
+}
+
+private enum class SwipeDirection {
+    Left,
+    Right,
+    Up,
+    Down,
+    None,
 }

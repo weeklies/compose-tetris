@@ -16,7 +16,7 @@ import com.jetgame.tetris.logic.*
 import com.jetgame.tetris.ui.GameBody
 import com.jetgame.tetris.ui.GameScreen
 import com.jetgame.tetris.ui.PreviewGameScreen
-import com.jetgame.tetris.ui.combinedClickable
+import com.jetgame.tetris.ui.combinedInteractive
 import com.jetgame.tetris.ui.theme.ComposetetrisTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -58,12 +58,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     GameBody(
-                        combinedClickable(
-                            onMove = { direction: Direction ->
-                                if (direction == Direction.Up) viewModel.dispatch(Action.Drop)
-                                else viewModel.dispatch(Action.Move(direction))
-                            },
-                            onRotate = { viewModel.dispatch(Action.Rotate) },
+                        combinedInteractive(
                             onRestart = { viewModel.dispatch(Action.Reset) },
                             onPause = {
                                 if (viewModel.viewState.value.isRunning) {
@@ -73,10 +68,21 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             onMute = { viewModel.dispatch(Action.Mute) }
-                        )
-                    ) {
-                        GameScreen()
-                    }
+                        ),
+                        {
+                            GameScreen(
+                                interactive =
+                                    combinedInteractive(
+                                        onMove = { direction: Direction ->
+                                            if (direction == Direction.Up)
+                                                viewModel.dispatch(Action.Drop)
+                                            else viewModel.dispatch(Action.Move(direction))
+                                        },
+                                        onRotate = { viewModel.dispatch(Action.Rotate) },
+                                    )
+                            )
+                        }
+                    )
                 }
             }
         }
