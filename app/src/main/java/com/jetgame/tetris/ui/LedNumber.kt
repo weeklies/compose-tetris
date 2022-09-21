@@ -26,8 +26,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jetgame.tetris.logic.LedFontFamily
-import com.jetgame.tetris.ui.theme.BrickMatrix
-import com.jetgame.tetris.ui.theme.BrickSpirit
+import com.jetgame.tetris.ui.theme.matrixColor
+import com.jetgame.tetris.ui.theme.spiritColor
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,9 +76,9 @@ fun LedClock(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier.width(6.dp).padding(end = 1.dp),
         ) {
-            LedComma(BrickMatrix)
+            LedComma(matrixColor)
             if (animateValue.roundToInt() == 1) {
-                LedComma(BrickSpirit)
+                LedComma(spiritColor)
             }
         }
 
@@ -96,7 +96,7 @@ fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Bo
                 Text(
                     "8",
                     fontSize = textSize,
-                    color = BrickMatrix,
+                    color = matrixColor,
                     fontFamily = LedFontFamily,
                     modifier = Modifier.width(textWidth),
                     textAlign = TextAlign.End
@@ -111,7 +111,7 @@ fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Bo
                 Text(
                     it.toString(),
                     fontSize = textSize,
-                    color = BrickSpirit,
+                    color = spiritColor,
                     fontFamily = LedFontFamily,
                     modifier = Modifier.width(textWidth),
                     textAlign = TextAlign.End

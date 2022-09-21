@@ -7,7 +7,6 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import com.jetgame.tetris.ui.theme.Purple200
 
 @Composable
 fun GameButton(
@@ -17,7 +16,6 @@ fun GameButton(
 ) {
     Button(
         modifier = modifier.size(size = size),
-        colors = ButtonDefaults.buttonColors(Purple200),
         shape = RoundedCornerShape(size / 2),
         onClick = onClick,
         elevation = ButtonDefaults.elevation(),
