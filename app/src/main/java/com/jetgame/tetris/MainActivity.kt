@@ -28,7 +28,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ComposetetrisTheme {
-                // A surface container using the 'background' color from the theme
                 val viewModel = viewModel<GameViewModel>()
                 val viewState = viewModel.viewState.value
 
