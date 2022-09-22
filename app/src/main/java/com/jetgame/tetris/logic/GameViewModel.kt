@@ -181,7 +181,12 @@ class GameViewModel : ViewModel() {
             emit(
                 state.copy(
                     gameStatus = GameStatus.ScreenClearing,
-                    bricks = state.bricks + Brick.of(xRange, y until state.matrix.second)
+                    bricks =
+                        state.bricks +
+                            Brick.of(
+                                xRange,
+                                y until state.matrix.second,
+                            )
                 )
             )
             delay(50)
@@ -191,7 +196,11 @@ class GameViewModel : ViewModel() {
                 state
                     .copy(
                         gameStatus = GameStatus.ScreenClearing,
-                        bricks = Brick.of(xRange, y until state.matrix.second),
+                        bricks =
+                            Brick.of(
+                                xRange,
+                                y until state.matrix.second,
+                            ),
                         spirit = Empty
                     )
                     .also { newState = it }
@@ -284,5 +293,5 @@ enum class GameStatus {
     GameOver // 游戏结束
 }
 
-private const val MatrixWidth = 10
-private const val MatrixHeight = 20
+private const val MatrixWidth = 12
+private const val MatrixHeight = 24

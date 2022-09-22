@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jetgame.tetris.R
 import com.jetgame.tetris.ui.theme.BodyColor
-import com.jetgame.tetris.ui.theme.BrickSpirit
-import com.jetgame.tetris.ui.theme.ScreenBackground
+import com.jetgame.tetris.ui.theme.md_theme_light_background
+import com.jetgame.tetris.ui.theme.spiritColor
 
 @Composable
 private fun AppIcon() {
@@ -56,12 +56,15 @@ private fun AppIcon() {
                     )
                 }
 
-                Box(modifier = Modifier.fillMaxSize().padding(12.dp).background(ScreenBackground))
+                Box(
+                    modifier =
+                        Modifier.fillMaxSize().padding(12.dp).background(md_theme_light_background)
+                )
 
                 Text(
                     stringResource(id = R.string.body_label),
                     textAlign = TextAlign.Center,
-                    color = BrickSpirit,
+                    color = spiritColor,
                     fontSize = 75.sp,
                     modifier = Modifier.align(Alignment.Center),
                     fontWeight = FontWeight.Bold

@@ -16,6 +16,23 @@ import com.jetgame.tetris.R
 
 fun Offset(x: Int, y: Int) = androidx.compose.ui.geometry.Offset(x.toFloat(), y.toFloat())
 
+data class Interactive
+constructor(
+    val onMove: (Direction) -> Unit,
+    val onRotate: () -> Unit,
+    val onRestart: () -> Unit,
+    val onPause: () -> Unit,
+    val onMute: () -> Unit
+)
+
+fun combinedInteractive(
+    onMove: (Direction) -> Unit = {},
+    onRotate: () -> Unit = {},
+    onRestart: () -> Unit = {},
+    onPause: () -> Unit = {},
+    onMute: () -> Unit = {}
+) = Interactive(onMove, onRotate, onRestart, onPause, onMute)
+
 enum class Direction {
     Left,
     Up,
