@@ -69,10 +69,10 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
                         ),
                 )
         GameScoreboard(
-            spirit =
+            dropBlock =
                 run {
-                    if (viewState.spirit == Spirit.Empty) Spirit.Empty
-                    else viewState.spiritNext.rotate()
+                    if (viewState.dropBlock == DropBlock.Empty) DropBlock.Empty
+                    else viewState.dropBlockNext.rotate()
                 },
             score = viewState.score,
             line = viewState.line,
@@ -134,13 +134,13 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
 
             drawMatrix(brickSize, viewState.matrix, leftOffset)
             drawMatrixBorder(brickSize, viewState.matrix, leftOffset * brickSize)
-            drawBricks(viewState.bricks, brickSize, viewState.matrix, leftOffset, isDark)
-            drawSpirit(
-                viewState.spirit,
+            drawBlocks(viewState.blocks, brickSize, viewState.matrix, leftOffset, isDark)
+            drawDropBlock(
+                viewState.dropBlock,
                 brickSize,
                 viewState.matrix,
                 leftOffset,
-                getColor(viewState.spirit.colorIndex, isDark)
+                getColor(viewState.dropBlock.colorIndex, isDark)
             )
             drawText(viewState.gameStatus, brickSize, viewState.matrix, animateValue, screenWidth)
         }
@@ -190,7 +190,7 @@ fun GameSettings(
 @Composable
 fun GameScoreboard(
     modifier: Modifier = Modifier,
-    spirit: Spirit,
+    dropBlock: DropBlock,
     score: Int = 0,
     line: Int = 0,
     level: Int = 1,
@@ -219,11 +219,11 @@ fun GameScoreboard(
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val brickSize = min(size.width / NextMatrix.first, size.height / NextMatrix.second)
                 drawMatrix(brickSize, NextMatrix)
-                drawSpirit(
-                    spirit.adjustOffset(NextMatrix),
+                drawDropBlock(
+                    dropBlock.adjustOffset(NextMatrix),
                     brickSize,
                     NextMatrix,
-                    color = spiritColor
+                    color = dropBlockColor
                 )
             }
         }
@@ -296,15 +296,15 @@ private fun DrawScope.drawMatrixBorder(
     )
 }
 
-private fun DrawScope.drawBricks(
-    brick: List<Brick>,
+private fun DrawScope.drawBlocks(
+    blocks: List<Block>,
     brickSize: Float,
     matrix: Pair<Int, Int>,
     leftOffset: Float = 0f,
     isDark: Boolean
 ) {
     clipRect(0f, 0f, bottom = matrix.second * brickSize) {
-        brick.forEach {
+        blocks.forEach {
             val (x, y) = it.location
 
             drawBrick(
@@ -319,15 +319,15 @@ private fun DrawScope.drawBricks(
     }
 }
 
-private fun DrawScope.drawSpirit(
-    spirit: Spirit,
+private fun DrawScope.drawDropBlock(
+    dropBlock: DropBlock,
     brickSize: Float,
     matrix: Pair<Int, Int>,
     leftOffset: Float = 0f,
     color: Color
 ) {
     clipRect(0f, 0f, bottom = matrix.second * brickSize) {
-        spirit.location.forEach {
+        dropBlock.location.forEach {
             drawBrick(
                 brickSize,
                 Offset(
@@ -371,13 +371,13 @@ fun PreviewGameScreen(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun PreviewSpiritType() {
+fun PreviewDropBlockType() {
     Row(Modifier.size(300.dp, 50.dp).background(md_theme_light_background)) {
         val matrix = 2 to 4
-        SpiritType.forEach {
+        BlockType.forEach {
             Canvas(Modifier.weight(1f).fillMaxHeight().padding(5.dp)) {
-                drawBricks(
-                    Brick.of(Spirit(it).adjustOffset(matrix)),
+                drawBlocks(
+                    Block.of(DropBlock(it).adjustOffset(matrix)),
                     min(size.width / matrix.first, size.height / matrix.second),
                     matrix,
                     isDark = false
@@ -388,7 +388,7 @@ fun PreviewSpiritType() {
 }
 
 fun getColor(colorIndex: Int, isDark: Boolean): Color {
-    return if (isDark) darkBrickColors[colorIndex] else lightBrickColors[colorIndex]
+    return if (isDark) darkBlockColors[colorIndex] else lightBlockColors[colorIndex]
 }
 
 private enum class SwipeDirection {
@@ -399,7 +399,7 @@ private enum class SwipeDirection {
     None,
 }
 
-val lightBrickColors =
+val lightBlockColors =
     listOf(
         Color.Gray,
         light_Green,
@@ -409,7 +409,7 @@ val lightBrickColors =
         md_theme_light_primary,
     )
 
-val darkBrickColors =
+val darkBlockColors =
     listOf(
         Color.Gray,
         dark_Green,

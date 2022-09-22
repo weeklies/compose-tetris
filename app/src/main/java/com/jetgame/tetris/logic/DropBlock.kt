@@ -1,22 +1,22 @@
 package com.jetgame.tetris.logic
 
 import androidx.compose.ui.geometry.Offset
-import com.jetgame.tetris.ui.lightBrickColors
+import com.jetgame.tetris.ui.lightBlockColors
 import kotlin.math.absoluteValue
 import kotlin.random.Random
 
 // The tetromino currently falling.
-data class Spirit(
+data class DropBlock(
     val shape: List<Offset> = emptyList(),
     val offset: Offset = Offset(0, 0),
     val colorIndex: Int = 0
 ) {
     val location: List<Offset> = shape.map { it + offset }
 
-    fun moveBy(step: Pair<Int, Int>): Spirit =
+    fun moveBy(step: Pair<Int, Int>): DropBlock =
         copy(offset = offset + Offset(step.first, step.second))
 
-    fun rotate(): Spirit {
+    fun rotate(): DropBlock {
         val newShape = shape.toMutableList()
         for (i in shape.indices) {
             newShape[i] = Offset(shape[i].y, -shape[i].x)
@@ -24,7 +24,7 @@ data class Spirit(
         return copy(shape = newShape)
     }
 
-    fun adjustOffset(matrix: Pair<Int, Int>, adjustY: Boolean = true): Spirit {
+    fun adjustOffset(matrix: Pair<Int, Int>, adjustY: Boolean = true): DropBlock {
         val yOffset =
             if (adjustY)
                 (location.minByOrNull { it.y }?.y?.takeIf { it < 0 }?.absoluteValue ?: 0).toInt() +
@@ -49,11 +49,11 @@ data class Spirit(
     }
 
     companion object {
-        val Empty = Spirit()
+        val Empty = DropBlock()
     }
 }
 
-val SpiritType =
+val BlockType =
     listOf(
         listOf(Offset(1, -1), Offset(1, 0), Offset(0, 0), Offset(0, 1)), // Z
         listOf(Offset(0, -1), Offset(0, 0), Offset(1, 0), Offset(1, 1)), // S
@@ -64,7 +64,7 @@ val SpiritType =
         listOf(Offset(1, -1), Offset(0, -1), Offset(0, 0), Offset(0, 1)) // J
     )
 
-fun Spirit.isValidInMatrix(blocks: List<Brick>, matrix: Pair<Int, Int>): Boolean {
+fun DropBlock.isValidInMatrix(blocks: List<Block>, matrix: Pair<Int, Int>): Boolean {
     return location.none { location ->
         location.x < 0 ||
             location.x > matrix.first - 1 ||
@@ -73,13 +73,13 @@ fun Spirit.isValidInMatrix(blocks: List<Brick>, matrix: Pair<Int, Int>): Boolean
     }
 }
 
-fun generateSpiritReverse(matrix: Pair<Int, Int>): List<Spirit> {
+fun generateDropBlockReverse(matrix: Pair<Int, Int>): List<DropBlock> {
     // Skip the first color, which is Gray.
-    val colorIndexes = List(lightBrickColors.size - 1) { it + 1 }.shuffled()
+    val colorIndexes = List(lightBlockColors.size - 1) { it + 1 }.shuffled()
 
     return colorIndexes.mapIndexed { i, colorIndex ->
-        Spirit(
-                SpiritType[Random.nextInt(0, SpiritType.size)],
+        DropBlock(
+                BlockType[Random.nextInt(0, BlockType.size)],
                 Offset(Random.nextInt(matrix.first - 1), -1),
                 colorIndex,
             )

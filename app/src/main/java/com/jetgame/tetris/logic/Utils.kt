@@ -67,7 +67,7 @@ val LedFontFamily =
     )
 
 val NextMatrix = 4 to 2
-const val ScoreEverySpirit = 12
+const val ScoreEveryDropBlock = 12
 
 fun calculateScore(lines: Int) =
     when (lines) {

@@ -67,7 +67,7 @@ val Yellow = Color(0xFFFFCD75)
 val Orange = Color(0xFFEF7D57)
 val Naut = Color(0xFF5D275D)
 
-val spiritColor = Color(0xDD000000)
+val dropBlockColor = Color(0xDD000000)
 val matrixColor = Color(0x1F000000)
 
 val BodyColor = Color(0xffafaed7)

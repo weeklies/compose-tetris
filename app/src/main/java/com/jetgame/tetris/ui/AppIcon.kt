@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.jetgame.tetris.R
 import com.jetgame.tetris.ui.theme.BodyColor
 import com.jetgame.tetris.ui.theme.md_theme_light_background
-import com.jetgame.tetris.ui.theme.spiritColor
+import com.jetgame.tetris.ui.theme.dropBlockColor
 
 @Composable
 private fun AppIcon() {
@@ -64,7 +64,7 @@ private fun AppIcon() {
                 Text(
                     stringResource(id = R.string.body_label),
                     textAlign = TextAlign.Center,
-                    color = spiritColor,
+                    color = dropBlockColor,
                     fontSize = 75.sp,
                     modifier = Modifier.align(Alignment.Center),
                     fontWeight = FontWeight.Bold
