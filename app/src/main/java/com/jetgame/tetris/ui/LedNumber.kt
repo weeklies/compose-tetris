@@ -1,24 +1,11 @@
 package com.jetgame.tetris.ui
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,8 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jetgame.tetris.logic.LedFontFamily
-import com.jetgame.tetris.ui.theme.matrixColor
-import com.jetgame.tetris.ui.theme.dropBlockColor
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,9 +61,9 @@ fun LedClock(modifier: Modifier = Modifier) {
         Box(
             modifier = Modifier.width(6.dp).padding(end = 1.dp),
         ) {
-            LedComma(matrixColor)
+            LedComma(MaterialTheme.colors.surface)
             if (animateValue.roundToInt() == 1) {
-                LedComma(dropBlockColor)
+                LedComma(MaterialTheme.colors.onSurface)
             }
         }
 
@@ -96,7 +81,7 @@ fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Bo
                 Text(
                     "8",
                     fontSize = textSize,
-                    color = matrixColor,
+                    color = MaterialTheme.colors.surface,
                     fontFamily = LedFontFamily,
                     modifier = Modifier.width(textWidth),
                     textAlign = TextAlign.End
@@ -111,7 +96,7 @@ fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Bo
                 Text(
                     it.toString(),
                     fontSize = textSize,
-                    color = dropBlockColor,
+                    color = MaterialTheme.colors.onSurface,
                     fontFamily = LedFontFamily,
                     modifier = Modifier.width(textWidth),
                     textAlign = TextAlign.End

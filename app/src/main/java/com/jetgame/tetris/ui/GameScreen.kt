@@ -1,17 +1,15 @@
 package com.jetgame.tetris.ui
 
 import android.graphics.Paint
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -85,45 +83,50 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
 
         val isDark = isSystemInDarkTheme()
 
+        val surface = colors.surface
+        val onSurface = colors.onSurface
+
         Canvas(
             modifier =
-                Modifier.fillMaxSize().pointerInput(Unit) {
-                    detectDragGestures(
-                        onDrag = { change, dragAmount ->
-                            change.consumeAllChanges()
+                Modifier.fillMaxSize()
+                    .pointerInput(Unit) { detectTapGestures(onTap = { interactive.onRotate() }) }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDrag = { change, dragAmount ->
+                                change.consumeAllChanges()
 
-                            val minAmount = 10
-                            val (x, y) = dragAmount
-                            val absX = x.absoluteValue
-                            val absY = y.absoluteValue
+                                val minAmount = 10
+                                val (x, y) = dragAmount
+                                val absX = x.absoluteValue
+                                val absY = y.absoluteValue
 
-                            if (absX < minAmount && absY < minAmount) {
-                                // This acts as a buffer against accidental swipes.
-                            } else if (absX >= absY) {
-                                // Prioritise horizontal swipes.
-                                when {
-                                    x > 0 -> swipeDirection = SwipeDirection.Right
-                                    x < 0 -> swipeDirection = SwipeDirection.Left
+                                if (absX < minAmount && absY < minAmount) {
+                                    // This acts as a buffer against accidental swipes.
+                                } else if (absX >= absY) {
+                                    // Prioritise horizontal swipes.
+                                    when {
+                                        x > 0 -> swipeDirection = SwipeDirection.Right
+                                        x < 0 -> swipeDirection = SwipeDirection.Left
+                                    }
+                                } else {
+                                    when {
+                                        y > 0 -> swipeDirection = SwipeDirection.Down
+                                        y < 0 -> swipeDirection = SwipeDirection.Up
+                                    }
                                 }
-                            } else {
-                                when {
-                                    y > 0 -> swipeDirection = SwipeDirection.Down
-                                    y < 0 -> swipeDirection = SwipeDirection.Up
+                            },
+                            onDragEnd = {
+                                when (swipeDirection) {
+                                    SwipeDirection.Right -> interactive.onMove(Right)
+                                    SwipeDirection.Left -> interactive.onMove(Left)
+                                    SwipeDirection.Down -> interactive.onMove(Up)
+                                    SwipeDirection.Up -> interactive.onRotate()
+                                    SwipeDirection.None -> {}
                                 }
-                            }
-                        },
-                        onDragEnd = {
-                            when (swipeDirection) {
-                                SwipeDirection.Right -> interactive.onMove(Right)
-                                SwipeDirection.Left -> interactive.onMove(Left)
-                                SwipeDirection.Down -> interactive.onMove(Up)
-                                SwipeDirection.Up -> interactive.onRotate()
-                                SwipeDirection.None -> {}
-                            }
-                            swipeDirection = SwipeDirection.None
-                        },
-                    )
-                }
+                                swipeDirection = SwipeDirection.None
+                            },
+                        )
+                    }
         ) {
             val screenWidth = size.width
             val brickSize =
@@ -132,9 +135,25 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
             // This is used to center the Game Display, along with screenWidth.
             val leftOffset = (screenWidth / brickSize - viewState.matrix.first) / 2
 
-            drawMatrix(brickSize, viewState.matrix, leftOffset)
-            drawMatrixBorder(brickSize, viewState.matrix, leftOffset * brickSize)
-            drawBlocks(viewState.blocks, brickSize, viewState.matrix, leftOffset, isDark)
+            drawMatrix(
+                brickSize,
+                viewState.matrix,
+                leftOffset,
+                surface,
+            )
+            drawMatrixBorder(
+                brickSize,
+                viewState.matrix,
+                leftOffset * brickSize,
+                onSurface,
+            )
+            drawBlocks(
+                viewState.blocks,
+                brickSize,
+                viewState.matrix,
+                leftOffset,
+                isDark,
+            )
             drawDropBlock(
                 viewState.dropBlock,
                 brickSize,
@@ -142,7 +161,14 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
                 leftOffset,
                 getColor(viewState.dropBlock.colorIndex, isDark)
             )
-            drawText(viewState.gameStatus, brickSize, viewState.matrix, animateValue, screenWidth)
+            drawText(
+                viewState.gameStatus,
+                brickSize,
+                viewState.matrix,
+                animateValue,
+                screenWidth,
+                onSurface,
+            )
         }
     }
 }
@@ -216,14 +242,17 @@ fun GameScoreboard(
             Text("Next")
             Spacer(modifier = Modifier.width(6.dp))
 
+            val surface = colors.surface
+            val onSurface = colors.onSurface
+
             Canvas(modifier = Modifier.fillMaxSize()) {
                 val brickSize = min(size.width / NextMatrix.first, size.height / NextMatrix.second)
-                drawMatrix(brickSize, NextMatrix)
+                drawMatrix(brickSize, NextMatrix, color = surface)
                 drawDropBlock(
                     dropBlock.adjustOffset(NextMatrix),
                     brickSize,
                     NextMatrix,
-                    color = dropBlockColor
+                    color = onSurface
                 )
             }
         }
@@ -235,7 +264,8 @@ private fun DrawScope.drawText(
     brickSize: Float,
     matrix: Pair<Int, Int>,
     alpha: Float,
-    screenWidth: Float
+    screenWidth: Float,
+    textColor: Color,
 ) {
 
     val centerY = brickSize * matrix.second / 2
@@ -246,7 +276,7 @@ private fun DrawScope.drawText(
                 screenWidth / 2,
                 centerY,
                 Paint().apply {
-                    color = Color.Black.copy(alpha = alpha).toArgb()
+                    color = textColor.copy(alpha = alpha).toArgb()
                     textSize = size
                     textAlign = Paint.Align.CENTER
                     style = Paint.Style.FILL_AND_STROKE
@@ -266,6 +296,7 @@ private fun DrawScope.drawMatrix(
     brickSize: Float,
     matrix: Pair<Int, Int>,
     leftOffset: Float = 0f,
+    color: Color,
 ) {
     (0 until matrix.first).forEach { x ->
         (0 until matrix.second).forEach { y ->
@@ -275,7 +306,7 @@ private fun DrawScope.drawMatrix(
                     x.toFloat() + leftOffset,
                     y.toFloat(),
                 ),
-                matrixColor
+                color,
             )
         }
     }
@@ -284,15 +315,16 @@ private fun DrawScope.drawMatrix(
 private fun DrawScope.drawMatrixBorder(
     brickSize: Float,
     matrix: Pair<Int, Int>,
-    leftOffset: Float
+    leftOffset: Float,
+    color: Color,
 ) {
 
     val gap = matrix.first * brickSize * 0.05f
     drawRect(
-        Color.Black,
+        color.copy(alpha = 0.4f),
         size = Size(matrix.first * brickSize + gap, matrix.second * brickSize + gap),
         topLeft = Offset(leftOffset - gap / 2, -gap / 2),
-        style = Stroke(1.dp.toPx())
+        style = Stroke(2.5.dp.toPx())
     )
 }
 
@@ -364,6 +396,7 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
     )
 }
 
+@ObsoleteCoroutinesApi
 @Composable
 fun PreviewGameScreen(modifier: Modifier = Modifier) {
     GameScreen(modifier, combinedInteractive())
@@ -401,9 +434,9 @@ private enum class SwipeDirection {
 
 val lightBlockColors =
     listOf(
-        Color.Gray,
+        light_onPurpleContainer,
         light_Green,
-        light_Naut,
+        light_Purple,
         light_Yellow,
         light_Orange,
         light_Blue,
@@ -413,9 +446,9 @@ val lightBlockColors =
 
 val darkBlockColors =
     listOf(
-        Color.Gray,
+        dark_onPurpleContainer,
         dark_Green,
-        dark_Naut,
+        dark_Purple,
         dark_Yellow,
         dark_Orange,
         dark_Blue,
@@ -425,7 +458,7 @@ val darkBlockColors =
 
 // Non-adaptive colors
 //    Green,
-//    Naut,
+//    Purple,
 //    Yellow,
 //    Blue,
 //    Red,
