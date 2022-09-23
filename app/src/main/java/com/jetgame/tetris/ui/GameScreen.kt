@@ -172,7 +172,7 @@ fun GameSettings(
             onClick = { interactive.onMute() },
         ) {
             Icon(
-                if (isMute) Icons.Rounded.VolumeUp else Icons.Rounded.VolumeOff,
+                if (isMute) Icons.Rounded.VolumeOff else Icons.Rounded.VolumeUp,
                 if (isMute) "Sound On" else "Sound Off",
             )
         }
@@ -406,7 +406,9 @@ val lightBlockColors =
         light_Naut,
         light_Yellow,
         light_Orange,
-        md_theme_light_primary,
+        light_Blue,
+        light_LightBlue,
+        light_Red,
     )
 
 val darkBlockColors =
@@ -416,5 +418,16 @@ val darkBlockColors =
         dark_Naut,
         dark_Yellow,
         dark_Orange,
-        md_theme_dark_primary,
+        dark_Blue,
+        dark_LightBlue,
+        dark_Red
     )
+
+// Non-adaptive colors
+//    Green,
+//    Naut,
+//    Yellow,
+//    Blue,
+//    Red,
+//    Orange,
+//    LightBlue,

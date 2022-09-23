@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Offset
 // The tetromino that has been set.
 //
 // Design-wise, a Block is made up of Bricks.
-// Under the hood it is drawn through calling drawBricks repeatedly.
+// Under the hood it is drawn through calling drawBrick repeatedly.
 data class Block(
     val location: Offset = Offset(0, 0),
     val colorIndex: Int,
