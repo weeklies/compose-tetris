@@ -1,18 +1,21 @@
 package com.jetgame.tetris.ui.stars.entities.meteor
 
 import android.graphics.*
-import android.support.v4.graphics.ColorUtils
+import androidx.core.graphics.ColorUtils
 
-
-internal class Meteorite(val smallestWidth: Int, var x: Int, var y: Int, val starSize: Int, var color: Int, val listener: Meteorite.MeteoriteCompleteListener) {
+internal class Meteorite(
+    val smallestWidth: Int,
+    var x: Int,
+    var y: Int,
+    val starSize: Int,
+    var color: Int,
+    val listener: Meteorite.MeteoriteCompleteListener
+) {
 
     private fun getTrailAlpha(): Int {
-//        val randomFactor = Math.random() * 255
-//        return randomFactor.toInt()
+        //        val randomFactor = Math.random() * 255
+        //        return randomFactor.toInt()
         return 200 + (Math.random() * 55).toInt()
-
-
-
     }
 
     private val trailLength = (200 + (Math.random() * (smallestWidth / 4))).toFloat()
@@ -20,16 +23,10 @@ internal class Meteorite(val smallestWidth: Int, var x: Int, var y: Int, val sta
     private var finished = false
     private val factor = starSize * (Math.random() * 1.9f)
 
+    private val starPaint = Paint(Paint.ANTI_ALIAS_FLAG).also { it.color = color }
 
-    private val starPaint = Paint(Paint.ANTI_ALIAS_FLAG).also {
-        it.color = color
-    }
-
-    private val trailPaint = Paint(Paint.ANTI_ALIAS_FLAG).also {
-        it.strokeWidth =
-                starSize.toFloat()
-    }
-
+    private val trailPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).also { it.strokeWidth = starSize.toFloat() }
 
     fun calculateFrame(viewWidth: Int, viewHeight: Int) {
 
@@ -43,17 +40,16 @@ internal class Meteorite(val smallestWidth: Int, var x: Int, var y: Int, val sta
         // go down
         y += factor.toInt()
 
-
-
-        trailPaint.shader = LinearGradient(
+        trailPaint.shader =
+            LinearGradient(
                 x.toFloat(),
                 y.toFloat(),
                 x.toFloat() + trailLength,
                 y.toFloat() - trailLength,
                 trailColor,
                 Color.TRANSPARENT,
-                Shader.TileMode.CLAMP)
-
+                Shader.TileMode.CLAMP
+            )
 
         if (x < (viewWidth * -0.5)) {
             listener.onMeteoriteComplete()
@@ -63,14 +59,18 @@ internal class Meteorite(val smallestWidth: Int, var x: Int, var y: Int, val sta
 
     fun onDraw(canvas: Canvas?): Canvas? {
 
-        canvas?.drawLine(x.toFloat(), y.toFloat(), x.toFloat() + trailLength, y.toFloat() - trailLength, trailPaint)
+        canvas?.drawLine(
+            x.toFloat(),
+            y.toFloat(),
+            x.toFloat() + trailLength,
+            y.toFloat() - trailLength,
+            trailPaint
+        )
         canvas?.drawCircle(x.toFloat(), y.toFloat(), starSize.toFloat() / 2f, starPaint)
         return canvas
     }
-
 
     interface MeteoriteCompleteListener {
         fun onMeteoriteComplete()
     }
 }
-
