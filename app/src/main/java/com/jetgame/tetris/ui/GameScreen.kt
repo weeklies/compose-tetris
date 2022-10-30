@@ -434,7 +434,7 @@ private enum class SwipeDirection {
 
 val lightBlockColors =
     listOf(
-        light_onPurpleContainer,
+        light_onPurpleContainer, // This is the color used for screen clearing.
         light_Green,
         light_Purple,
         light_Yellow,
@@ -446,7 +446,7 @@ val lightBlockColors =
 
 val darkBlockColors =
     listOf(
-        dark_onPurpleContainer,
+        dark_onPurpleContainer, // This is the color used for screen clearing.
         dark_Green,
         dark_Purple,
         dark_Yellow,

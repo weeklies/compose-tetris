@@ -13,7 +13,7 @@ data class Block(
     companion object {
         fun of(dropBlock: DropBlock) = of(dropBlock.location, dropBlock.colorIndex)
 
-        // Used to generate screenClearing effect. Default color is Gray.
+        // Used to generate screenClearing effect.
         fun of(xRange: IntRange, yRange: IntRange, colorIndex: Int = 0): List<Block> {
             return of(
                 mutableListOf<Offset>().apply {
