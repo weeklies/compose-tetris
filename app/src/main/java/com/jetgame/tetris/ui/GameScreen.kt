@@ -439,8 +439,8 @@ val lightBlockColors =
         light_Purple,
         light_Yellow,
         light_Orange,
+        light_Silver,
         light_Blue,
-        light_LightBlue,
         light_Red,
     )
 
@@ -451,8 +451,8 @@ val darkBlockColors =
         dark_Purple,
         dark_Yellow,
         dark_Orange,
+        dark_Silver,
         dark_Blue,
-        dark_LightBlue,
         dark_Red
     )
 
@@ -460,7 +460,5 @@ val darkBlockColors =
 //    Green,
 //    Purple,
 //    Yellow,
-//    Blue,
 //    Red,
 //    Orange,
-//    LightBlue,
