@@ -25,7 +25,7 @@ fun GameBackground(modifier: Modifier = Modifier, screen: @Composable (Modifier)
             }
         )
 
-        screen(Modifier.padding(horizontal = 16.dp, vertical = 40.dp))
+        screen(Modifier.padding(horizontal = 20.dp, vertical = 8.dp).padding(bottom = 26.dp))
     }
 }
 
