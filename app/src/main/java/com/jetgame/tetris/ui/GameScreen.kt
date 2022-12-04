@@ -1,6 +1,7 @@
 package com.jetgame.tetris.ui
 
 import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -11,10 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Pause
-import androidx.compose.material.icons.rounded.PlayArrow
-import androidx.compose.material.icons.rounded.VolumeOff
-import androidx.compose.material.icons.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -89,7 +87,18 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
         Canvas(
             modifier =
                 Modifier.fillMaxSize()
-                    .pointerInput(Unit) { detectTapGestures(onTap = { interactive.onRotate() }) }
+                    .pointerInput(viewState.gameStatus) {
+                        detectTapGestures(
+                            onTap = {
+                                when (viewState.gameStatus) {
+                                    GameStatus.Onboard,
+                                    GameStatus.GameOver -> interactive.onRestart()
+                                    GameStatus.Running -> interactive.onRotate()
+                                    else -> {}
+                                }
+                            }
+                        )
+                    }
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDrag = { change, dragAmount ->
@@ -180,31 +189,25 @@ fun GameSettings(
     isPaused: Boolean,
     gameStatus: GameStatus
 ) {
-    val notPlaying = gameStatus == GameStatus.GameOver || gameStatus == GameStatus.Onboard
     Row {
-        // Prevent restarting when it is already in progress
-        if (gameStatus != GameStatus.ScreenClearing)
-            Button(
-                onClick = { interactive.onRestart() },
-                shape = MaterialTheme.shapes.small,
-            ) {
-                // TODO: Change start functionality to a "tap anywhere to start"
-                Text(if (notPlaying) "Start" else "Restart")
+        // Allow the player to stop running game
+        if (gameStatus == GameStatus.Running || gameStatus == GameStatus.Paused)
+            IconButton({ interactive.onRestart() }) {
+                Icon(
+                    Icons.Rounded.Stop,
+                    "Stop",
+                )
             }
 
         Spacer(Modifier.weight(1f))
 
-        IconButton(
-            onClick = { interactive.onMute() },
-        ) {
+        IconButton({ interactive.onMute() }) {
             Icon(
                 if (isMute) Icons.Rounded.VolumeOff else Icons.Rounded.VolumeUp,
                 if (isMute) "Sound On" else "Sound Off",
             )
         }
-        IconButton(
-            onClick = { interactive.onPause() },
-        ) {
+        IconButton({ interactive.onPause() }) {
             Icon(
                 if (isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
                 if (isPaused) "Resume" else "Pause",
@@ -269,26 +272,42 @@ private fun DrawScope.drawText(
 ) {
 
     val centerY = brickSize * matrix.second / 2
-    val drawText = { text: String, size: Float ->
+    val drawText = { text: String, subtitle: String?, size: Float ->
         drawIntoCanvas {
             it.nativeCanvas.drawText(
                 text,
                 screenWidth / 2,
-                centerY,
+                centerY - brickSize,
                 Paint().apply {
                     color = textColor.copy(alpha = alpha).toArgb()
                     textSize = size
                     textAlign = Paint.Align.CENTER
                     style = Paint.Style.FILL_AND_STROKE
-                    strokeWidth = size / 12
+                    typeface = Typeface.MONOSPACE
+                    strokeWidth = (size - 15f) / 12
                 }
             )
+
+            if (subtitle != null)
+                it.nativeCanvas.drawText(
+                    subtitle,
+                    screenWidth / 2,
+                    centerY + 2 * brickSize,
+                    Paint().apply {
+                        color = textColor.copy(alpha = alpha).toArgb()
+                        textSize = size - 30f
+                        textAlign = Paint.Align.CENTER
+                        style = Paint.Style.FILL_AND_STROKE
+                        typeface = Typeface.MONOSPACE
+                        strokeWidth = (size - 50f) / 12
+                    }
+                )
         }
     }
     if (gameStatus == GameStatus.Onboard) {
-        drawText("Tetrominot".uppercase(), 60f)
+        drawText("Tetrominot!", "Tap to start", 80f)
     } else if (gameStatus == GameStatus.GameOver) {
-        drawText("GAME OVER", 60f)
+        drawText("Game Over", "Tap to restart", 80f)
     }
 }
 
