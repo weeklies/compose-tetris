@@ -8,9 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-
-    <color name="star_color_1">#ffffff</color>
-    <color name="star_color_2">#25ADFF</color>
-    <color name="star_color_3">#FFC100</color>
-    <color name="star_color_4">#FF3800</color>
+    <color name="light_star_color_100">#FFfafeff</color>
+    <color name="light_star_color_70">#B3fafeff</color>
+    <color name="light_star_color_60">#99fafeff</color>
+    <color name="light_star_color_40">#66fafeff</color>
+    <color name="light_gold_star_color_70">#B3f6c177</color>
 </resources>

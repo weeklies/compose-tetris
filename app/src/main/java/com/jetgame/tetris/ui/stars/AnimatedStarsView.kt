@@ -1,7 +1,9 @@
 package com.jetgame.tetris.ui.stars
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
+import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import com.jetgame.tetris.R
@@ -24,11 +26,11 @@ import kotlin.concurrent.timerTask
  * Crafted with ❤️ by sofakingforever
  */
 class AnimatedStarsView
-@kotlin.jvm.JvmOverloads
+@JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) :
     View(context, attrs, defStyleAttr) {
 
-    private val fps: Long = 1000 / 60
+    private val period: Long = 24
     private val defaultStarCount: Int = 25
     private val threadExecutor = Executors.newSingleThreadExecutor()
 
@@ -93,7 +95,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             array.getResourceId(R.styleable.AnimatedStarsView_starsView_meteoritesColors, 0)
 
         if (starColorsArrayId != 0) {
-            starColors = context.resources.getIntArray(starColorsArrayId)
+            // TODO: Make the stars for light mode less ugly. For now, it's set to a white default.
+            val darkMode =
+                resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+                    Configuration.UI_MODE_NIGHT_YES
+            starColors =
+                if (darkMode) context.resources.getIntArray(starColorsArrayId)
+                else intArrayOf(Color.parseColor("#ffffff"))
         }
 
         if (meteoritesColorsArrayId != 0) {
@@ -110,7 +118,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             timer = Timer()
             task = timerTask { invalidateStars() }
 
-            timer.scheduleAtFixedRate(task, 0, fps)
+            timer.scheduleAtFixedRate(task, 0, period)
 
             started = true
         }
@@ -168,7 +176,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
     private fun initStars() {
 
         if (!started) return
-        //        val generateColor = { starColors[random.nextInt(starColors.size)] }
 
         meteoriteListener =
             object : Meteorite.MeteoriteCompleteListener {
@@ -230,7 +237,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         // not initiated
         if (!initiated) return
 
-        // not finised drawing
+        // not finished drawing
         if (starsCalculatedFlag) return
 
         if (calculateRunnable == null) {

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="star_colors">
+        <item>@color/light_star_color_100</item>
+        <item>@color/light_star_color_70</item>
+        <item>@color/light_star_color_70</item>
+        <item>@color/light_star_color_60</item>
+        <item>@color/light_star_color_60</item>
+        <item>@color/light_star_color_60</item>
+        <item>@color/light_star_color_40</item>
+        <item>@color/light_gold_star_color_70</item>
+    </integer-array>
+</resources>
