@@ -22,7 +22,8 @@ constructor(
     val onRotate: () -> Unit,
     val onRestart: () -> Unit,
     val onPause: () -> Unit,
-    val onMute: () -> Unit
+    val onMute: () -> Unit,
+    val onDarkMode: () -> Unit
 )
 
 fun combinedInteractive(
@@ -30,8 +31,9 @@ fun combinedInteractive(
     onRotate: () -> Unit = {},
     onRestart: () -> Unit = {},
     onPause: () -> Unit = {},
-    onMute: () -> Unit = {}
-) = Interactive(onMove, onRotate, onRestart, onPause, onMute)
+    onMute: () -> Unit = {},
+    onDarkMode: () -> Unit = {}
+) = Interactive(onMove, onRotate, onRestart, onPause, onMute, onDarkMode)
 
 enum class Direction {
     Left,

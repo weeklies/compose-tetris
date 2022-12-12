@@ -28,14 +28,13 @@ import kotlinx.coroutines.isActive
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //        StatusBarUtil.transparentStatusBar(this)
         SoundUtil.init(this)
 
         setContent {
-            ComposeTetrisTheme {
-                val viewModel = viewModel<GameViewModel>()
-                val viewState = viewModel.viewState.value
+            val viewModel = viewModel<GameViewModel>()
+            val viewState = viewModel.viewState.value
 
+            ComposeTetrisTheme(viewState.isDarkMode) {
                 LaunchedEffect(key1 = Unit) {
                     while (isActive) {
                         delay(650L - 55 * (viewState.level - 1))
@@ -45,15 +44,16 @@ class MainActivity : ComponentActivity() {
 
                 val lifecycleOwner = LocalLifecycleOwner.current
                 DisposableEffect(key1 = Unit) {
-                    val observer = object : DefaultLifecycleObserver {
-                        override fun onResume(owner: LifecycleOwner) {
-                            viewModel.dispatch(Action.Resume)
-                        }
+                    val observer =
+                        object : DefaultLifecycleObserver {
+                            override fun onResume(owner: LifecycleOwner) {
+                                viewModel.dispatch(Action.Resume)
+                            }
 
-                        override fun onPause(owner: LifecycleOwner) {
-                            viewModel.dispatch(Action.Pause)
+                            override fun onPause(owner: LifecycleOwner) {
+                                viewModel.dispatch(Action.Pause)
+                            }
                         }
-                    }
                     lifecycleOwner.lifecycle.addObserver(observer)
                     onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
                 }
@@ -61,22 +61,26 @@ class MainActivity : ComponentActivity() {
                 Scaffold { padding ->
                     GameBackground(Modifier.padding(padding)) { modifier ->
                         GameScreen(
-                            modifier, interactive = combinedInteractive(
-                                onMove = { direction: Direction ->
-                                    if (direction == Direction.Up) viewModel.dispatch(Action.Drop)
-                                    else viewModel.dispatch(Action.Move(direction))
-                                },
-                                onRotate = { viewModel.dispatch(Action.Rotate) },
-                                onMute = { viewModel.dispatch(Action.Mute) },
-                                onPause = {
-                                    if (viewModel.viewState.value.isRunning) {
-                                        viewModel.dispatch(Action.Pause)
-                                    } else {
-                                        viewModel.dispatch(Action.Resume)
-                                    }
-                                },
-                                onRestart = { viewModel.dispatch(Action.Reset) },
-                            )
+                            modifier,
+                            interactive =
+                                combinedInteractive(
+                                    onMove = { direction: Direction ->
+                                        if (direction == Direction.Up)
+                                            viewModel.dispatch(Action.Drop)
+                                        else viewModel.dispatch(Action.Move(direction))
+                                    },
+                                    onRotate = { viewModel.dispatch(Action.Rotate) },
+                                    onMute = { viewModel.dispatch(Action.Mute) },
+                                    onDarkMode = { viewModel.dispatch(Action.DarkMode) },
+                                    onPause = {
+                                        if (viewModel.viewState.value.isRunning) {
+                                            viewModel.dispatch(Action.Pause)
+                                        } else {
+                                            viewModel.dispatch(Action.Resume)
+                                        }
+                                    },
+                                    onRestart = { viewModel.dispatch(Action.Reset) },
+                                )
                         )
                     }
                 }

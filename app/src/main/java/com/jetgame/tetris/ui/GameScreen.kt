@@ -7,7 +7,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
@@ -49,6 +48,7 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
         GameSettings(
             interactive = interactive,
             isMute = viewState.isMute,
+            isDarkMode = viewState.isDarkMode,
             isPaused = viewState.isPaused,
             gameStatus = viewState.gameStatus
         )
@@ -78,8 +78,6 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
         Spacer(Modifier.height(16.dp))
 
         var swipeDirection = SwipeDirection.None
-
-        val isDark = isSystemInDarkTheme()
 
         val surface = colors.surface
         val onSurface = colors.onSurface
@@ -161,14 +159,14 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
                 brickSize,
                 viewState.matrix,
                 leftOffset,
-                isDark,
+                viewState.isDarkMode,
             )
             drawDropBlock(
                 viewState.dropBlock,
                 brickSize,
                 viewState.matrix,
                 leftOffset,
-                getColor(viewState.dropBlock.colorIndex, isDark)
+                getColor(viewState.dropBlock.colorIndex, viewState.isDarkMode)
             )
             drawText(
                 viewState.gameStatus,
@@ -186,31 +184,40 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
 fun GameSettings(
     interactive: Interactive,
     isMute: Boolean,
+    isDarkMode: Boolean,
     isPaused: Boolean,
     gameStatus: GameStatus
 ) {
     Row {
         // Allow the player to stop running game
-        if (gameStatus == GameStatus.Running || gameStatus == GameStatus.Paused)
+
+        if (gameStatus == GameStatus.Running || gameStatus == GameStatus.Paused) {
+            IconButton({ interactive.onPause() }) {
+                Icon(
+                    if (isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
+                    if (isPaused) "Resume" else "Pause",
+                )
+            }
             IconButton({ interactive.onRestart() }) {
                 Icon(
                     Icons.Rounded.Stop,
                     "Stop",
                 )
             }
+        }
 
         Spacer(Modifier.weight(1f))
 
+        IconButton({ interactive.onDarkMode() }) {
+            Icon(
+                if (!isDarkMode) Icons.Rounded.DarkMode else Icons.Rounded.LightMode,
+                if (!isDarkMode) "Dark Theme" else "Light Theme",
+            )
+        }
         IconButton({ interactive.onMute() }) {
             Icon(
                 if (isMute) Icons.Rounded.VolumeOff else Icons.Rounded.VolumeUp,
                 if (isMute) "Sound On" else "Sound Off",
-            )
-        }
-        IconButton({ interactive.onPause() }) {
-            Icon(
-                if (isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
-                if (isPaused) "Resume" else "Pause",
             )
         }
     }

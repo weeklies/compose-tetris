@@ -1,6 +1,5 @@
 package com.jetgame.tetris.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.material.darkColors
@@ -38,15 +37,10 @@ private val DarkColorPalette =
     )
 
 @Composable
-fun ComposeTetrisTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
-
+fun ComposeTetrisTheme(darkTheme: Boolean = true, content: @Composable () -> Unit) {
     MaterialTheme(
-        colors = colors,
-        typography = Typography(defaultFontFamily = defaultFontFamily),
+        colors = if (darkTheme) DarkColorPalette else LightColorPalette,
+        typography = Typography(defaultFontFamily),
         shapes = Shapes,
         content = content
     )

@@ -1,9 +1,7 @@
 package com.jetgame.tetris.ui.stars
 
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Canvas
-import android.graphics.Color
 import android.util.AttributeSet
 import android.view.View
 import com.jetgame.tetris.R
@@ -95,13 +93,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             array.getResourceId(R.styleable.AnimatedStarsView_starsView_meteoritesColors, 0)
 
         if (starColorsArrayId != 0) {
-            // TODO: Make the stars for light mode less ugly. For now, it's set to a white default.
-            val darkMode =
-                resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
-                    Configuration.UI_MODE_NIGHT_YES
-            starColors =
-                if (darkMode) context.resources.getIntArray(starColorsArrayId)
-                else intArrayOf(Color.parseColor("#ffffff"))
+            starColors = context.resources.getIntArray(starColorsArrayId)
         }
 
         if (meteoritesColorsArrayId != 0) {

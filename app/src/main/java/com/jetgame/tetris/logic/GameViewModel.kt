@@ -32,7 +32,8 @@ class GameViewModel : ViewModel() {
                                 )
                                     return@run ViewState(
                                         gameStatus = GameStatus.Running,
-                                        isMute = state.isMute
+                                        isMute = state.isMute,
+                                        isDarkMode = state.isDarkMode
                                     )
                                 state.copy(gameStatus = GameStatus.ScreenClearing).also {
                                     launch {
@@ -40,7 +41,8 @@ class GameViewModel : ViewModel() {
                                         emit(
                                             ViewState(
                                                 gameStatus = GameStatus.Onboard,
-                                                isMute = state.isMute
+                                                isMute = state.isMute,
+                                                isDarkMode = state.isDarkMode
                                             )
                                         )
                                     }
@@ -172,6 +174,7 @@ class GameViewModel : ViewModel() {
                                 }
                             }
                         Action.Mute -> state.copy(isMute = !state.isMute)
+                        Action.DarkMode -> state.copy(isDarkMode = !state.isDarkMode)
                     }
                 )
             }
@@ -264,6 +267,7 @@ class GameViewModel : ViewModel() {
         val score: Int = 0,
         val line: Int = 0,
         val isMute: Boolean = false,
+        val isDarkMode: Boolean = true,
     ) {
         val level: Int
             get() = min(10, 1 + line / 20)
@@ -288,6 +292,7 @@ sealed interface Action {
     object Drop : Action
     object GameTick : Action
     object Mute : Action
+    object DarkMode : Action
 }
 
 enum class GameStatus {
