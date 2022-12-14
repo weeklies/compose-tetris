@@ -126,7 +126,15 @@ sealed class SoundType(val res: Int) {
     object Start : SoundType(R.raw.start)
     object Drop : SoundType(R.raw.drop)
     object Clean : SoundType(R.raw.clean)
+    object GameOver : SoundType(R.raw.gameover)
 }
 
 val Sounds =
-    listOf(SoundType.Move, SoundType.Rotate, SoundType.Start, SoundType.Drop, SoundType.Clean)
+    listOf(
+        SoundType.Move,
+        SoundType.Rotate,
+        SoundType.Start,
+        SoundType.Drop,
+        SoundType.Clean,
+        SoundType.GameOver
+    )
