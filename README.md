@@ -42,6 +42,7 @@ Download latest APK [here](https://github.com/vitaviva/compose-tetris/actions)
 # Attribution
 
 SFX taken from https://opengameart.org/content/63-digital-sound-effects-lasers-phasers-space-etc
+
 CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
 
 ```
