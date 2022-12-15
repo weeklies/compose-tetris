@@ -354,7 +354,7 @@ private fun DrawScope.drawMatrixBorder(
     )
 }
 
-private fun DrawScope.drawBlocks(
+internal fun DrawScope.drawBlocks(
     blocks: List<Block>,
     brickSize: Float,
     matrix: Pair<Int, Int>,
@@ -412,7 +412,7 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
         style = Stroke(outerSize / 10)
     )
 
-    val innerSize = brickSize * 0.5f
+    val innerSize = brickSize * 0.6f
     val innerOffset = (brickSize - innerSize) / 2
 
     drawRect(
