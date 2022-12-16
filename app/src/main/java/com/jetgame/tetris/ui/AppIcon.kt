@@ -2,148 +2,31 @@ package com.jetgame.tetris.ui
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.jetgame.tetris.R
-import com.jetgame.tetris.ui.theme.dropBlockColor
-import com.jetgame.tetris.ui.theme.md_theme_light_background
+import com.jetgame.tetris.logic.Block
+import com.jetgame.tetris.logic.BlockType
+import com.jetgame.tetris.logic.DropBlock
+import kotlin.math.min
+
+@Preview(widthDp = 400, heightDp = 400) @Composable private fun PreviewAppIcon() = AppIcon()
 
 @Composable
-private fun AppIcon() {
+fun AppIcon() {
+    Row(Modifier.background(Color(0xFF000000)).padding(40.dp)) {
+        val matrix = 2 to 4
 
-    Column(
-        Modifier.fillMaxSize()
-            .background(Color.Transparent)
-            .background(MaterialTheme.colors.primary, RoundedCornerShape(50.dp))
-            .padding(top = 30.dp)
-    ) {
-
-        // Screen
-        Box(Modifier.align(Alignment.CenterHorizontally)) {
-            Box(
-                Modifier.align(Alignment.Center)
-                    .size(360.dp, 220.dp)
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 20.dp)
-            ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    drawScreenBorder(
-                        Offset(0f, 0f),
-                        Offset(size.width, 0f),
-                        Offset(0f, size.height),
-                        Offset(size.width, size.height)
-                    )
-                }
-
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize().padding(12.dp).background(md_theme_light_background)
-                )
-
-                Text(
-                    stringResource(id = R.string.body_label),
-                    textAlign = TextAlign.Center,
-                    color = dropBlockColor,
-                    fontSize = 75.sp,
-                    modifier = Modifier.align(Alignment.Center),
-                    fontWeight = FontWeight.Bold
-                )
-            }
-        }
-
-        Row(
-            modifier =
-                Modifier.padding(start = 45.dp, end = 45.dp).height(160.dp).padding(bottom = 10.dp)
-        ) {
-            // DIRECTION BTN
-            Box(modifier = Modifier.fillMaxHeight().weight(0.55f)) {
-                GameButton(Modifier.align(Alignment.TopCenter), size = DirectionButtonSize)
-                GameButton(Modifier.align(Alignment.CenterStart), size = DirectionButtonSize)
-                GameButton(Modifier.align(Alignment.CenterEnd), size = DirectionButtonSize)
-                GameButton(Modifier.align(Alignment.BottomCenter), size = DirectionButtonSize)
-            }
-
-            // ROTATE BTN
-            Box(modifier = Modifier.weight(0.45f).fillMaxHeight()) {
-                GameButton(Modifier.align(Alignment.CenterEnd), size = RotateButtonSize)
-            }
+        Canvas(Modifier.weight(1f).fillMaxHeight()) {
+            drawBlocks(
+                Block.of(DropBlock(BlockType[6]).adjustOffset(matrix).copy(colorIndex = 2)),
+                min(size.width / matrix.first, size.height / matrix.second),
+                matrix,
+                isDark = true
+            )
         }
     }
-}
-
-@Preview(widthDp = 400, heightDp = 400)
-@Composable
-private fun PreviewAppIcon() {
-    AppIcon()
-}
-
-private val DirectionButtonSize = 60.dp
-private val RotateButtonSize = 90.dp
-
-private fun DrawScope.drawScreenBorder(
-    topLef: Offset,
-    topRight: Offset,
-    bottomLeft: Offset,
-    bottomRight: Offset
-) {
-    var path =
-        Path().apply {
-            moveTo(topLef.x, topLef.y)
-            lineTo(topRight.x, topRight.y)
-            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
-            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
-            lineTo(bottomLeft.x, bottomLeft.y)
-            close()
-        }
-    drawPath(path, Color.Black.copy(0.5f))
-
-    path =
-        Path().apply {
-            moveTo(bottomRight.x, bottomRight.y)
-            lineTo(bottomLeft.x, bottomLeft.y)
-            lineTo(topRight.x / 2 + topLef.x / 2, bottomLeft.y - topRight.x / 2 + topLef.x / 2)
-            lineTo(topRight.x / 2 + topLef.x / 2, topLef.y + topRight.x / 2 + topLef.x / 2)
-            lineTo(topRight.x, topRight.y)
-            close()
-        }
-
-    drawPath(path, Color.White.copy(0.5f))
-}
-
-@Composable
-private fun GameButton(
-    modifier: Modifier = Modifier,
-    size: Dp,
-    onClick: () -> Unit = {},
-) {
-    Button(
-        modifier = modifier.size(size = size),
-        shape = RoundedCornerShape(size / 2),
-        onClick = onClick,
-        elevation = ButtonDefaults.elevation(),
-    ) {}
 }
