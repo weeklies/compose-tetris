@@ -142,7 +142,7 @@ class GameViewModel : ViewModel() {
                                             (state.dropBlockReserve - state.dropBlockNext).takeIf {
                                                 it.isNotEmpty()
                                             }
-                                                ?: generateDropBlockReverse(state.matrix),
+                                                ?: generateDropAndNautBlocks(state.matrix),
                                         score =
                                             state.score +
                                                 calculateScore(clearedLines) +

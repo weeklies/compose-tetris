@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -100,7 +99,7 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDrag = { change, dragAmount ->
-                                change.consumeAllChanges()
+                                change.consume()
 
                                 val minAmount = 10
                                 val (x, y) = dragAmount
@@ -434,6 +433,24 @@ fun PreviewDropBlockType() {
     Row(Modifier.size(300.dp, 50.dp).background(md_theme_light_background)) {
         val matrix = 2 to 4
         BlockType.forEach {
+            Canvas(Modifier.weight(1f).fillMaxHeight().padding(5.dp)) {
+                drawBlocks(
+                    Block.of(DropBlock(it).adjustOffset(matrix)),
+                    min(size.width / matrix.first, size.height / matrix.second),
+                    matrix,
+                    isDark = false
+                )
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewNautBlockType() {
+    Row(Modifier.size(300.dp, 50.dp).background(md_theme_light_background)) {
+        val matrix = 3 to 3
+        NautBlockType.forEach {
             Canvas(Modifier.weight(1f).fillMaxHeight().padding(5.dp)) {
                 drawBlocks(
                     Block.of(DropBlock(it).adjustOffset(matrix)),

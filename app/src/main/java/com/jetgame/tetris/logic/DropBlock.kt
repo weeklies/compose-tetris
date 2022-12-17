@@ -64,6 +64,22 @@ val BlockType =
         listOf(Offset(1, -1), Offset(0, -1), Offset(0, 0), Offset(0, 1)) // J
     )
 
+val NautBlockType =
+    listOf(
+        // Monomino
+        listOf(Offset(0, 0)),
+        // Domino
+        listOf(Offset(0, 0), Offset(0, 1)),
+        // Tromino
+        listOf(Offset(0, -1), Offset(0, 0), Offset(0, 1)), // I
+        listOf(Offset(0, -1), Offset(1, -1), Offset(1, 0)), // L
+        // Pentomino (a selection)
+        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(1, 0), Offset(-1, 0)), // t
+        listOf(Offset(1, -1), Offset(0, -1), Offset(0, 0), Offset(0, 1), Offset(1, 1)), // u
+        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(1, 0), Offset(-1, -1)), // T
+        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(-1, 0), Offset(1, -1)), // T
+    )
+
 fun DropBlock.isValidInMatrix(blocks: List<Block>, matrix: Pair<Int, Int>): Boolean {
     return location.none { location ->
         location.x < 0 ||
@@ -73,16 +89,29 @@ fun DropBlock.isValidInMatrix(blocks: List<Block>, matrix: Pair<Int, Int>): Bool
     }
 }
 
-fun generateDropBlockReverse(matrix: Pair<Int, Int>): List<DropBlock> {
+fun generateDropAndNautBlocks(matrix: Pair<Int, Int>): List<DropBlock> {
     // Skip the first color, which is Gray.
     val colorIndexes = List(lightBlockColors.size - 1) { it + 1 }.shuffled()
+    val dropBlocks =
+        colorIndexes.mapIndexed { i, colorIndex ->
+            DropBlock(
+                    BlockType[Random.nextInt(BlockType.size)],
+                    Offset(Random.nextInt(matrix.first - 1), -1),
+                    colorIndex,
+                )
+                .adjustOffset(matrix, false)
+        }
 
-    return colorIndexes.mapIndexed { i, colorIndex ->
-        DropBlock(
-                BlockType[Random.nextInt(0, BlockType.size)],
+    val nautProbability = 0.2
+    if (nautProbability <= Random.nextDouble()) return dropBlocks
+    else {
+        val nautBlock =
+            DropBlock(
+                NautBlockType[Random.nextInt(0, NautBlockType.size)],
                 Offset(Random.nextInt(matrix.first - 1), -1),
-                colorIndex,
+                // Skip the first color, which is Gray.
+                Random.nextInt(1, lightBlockColors.size)
             )
-            .adjustOffset(matrix, false)
+        return (dropBlocks + nautBlock).shuffled()
     }
 }
