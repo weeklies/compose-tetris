@@ -108,7 +108,9 @@ fun generateDropAndNautBlocks(matrix: Pair<Int, Int>): List<DropBlock> {
         val nautBlock =
             DropBlock(
                 NautBlockType[Random.nextInt(0, NautBlockType.size)],
-                Offset(Random.nextInt(matrix.first - 1), -1),
+                // The stricter x-range is important as certain Nauts can trigger an instant game
+                // over if it was not the case.
+                Offset(Random.nextInt(1, matrix.first - 2), -1),
                 // Skip the first color, which is Gray.
                 Random.nextInt(1, lightBlockColors.size)
             )
