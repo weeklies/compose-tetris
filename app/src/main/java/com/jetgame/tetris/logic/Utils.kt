@@ -68,7 +68,7 @@ val LedFontFamily =
         Font(R.font.unidream_led, FontWeight.Bold)
     )
 
-val NextMatrix = 4 to 2
+val NextMatrix = 4 to 3
 const val ScoreEveryDropBlock = 12
 
 fun calculateScore(lines: Int) =
