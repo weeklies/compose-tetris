@@ -102,7 +102,7 @@ fun generateDropAndNautBlocks(matrix: Pair<Int, Int>): List<DropBlock> {
                 .adjustOffset(matrix, false)
         }
 
-    val nautProbability = 0.2
+    val nautProbability = 0.6
     if (nautProbability <= Random.nextDouble()) return dropBlocks
     else {
         val nautBlock =
