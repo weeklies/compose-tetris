@@ -88,6 +88,16 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        SoundUtil.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SoundUtil.resume()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         SoundUtil.release()

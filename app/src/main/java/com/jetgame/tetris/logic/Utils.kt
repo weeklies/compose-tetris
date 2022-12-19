@@ -2,6 +2,7 @@ package com.jetgame.tetris.logic
 
 import android.content.Context
 import android.media.AudioManager
+import android.media.MediaPlayer
 import android.media.SoundPool
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -81,18 +82,25 @@ object SoundUtil {
     }
     private val map = mutableMapOf<SoundType, Int>()
 
+    private var mp: MediaPlayer? = null
+
     fun init(context: Context) {
         Sounds.forEach { map[it] = sp.load(context, it.res, 1) }
-    }
-
-    fun release() {
-        sp.release()
+        mp = MediaPlayer.create(context, R.raw.bgm).apply { isLooping = true }
     }
 
     fun play(isMute: Boolean, sound: SoundType) {
         if (!isMute) {
             sp.play(requireNotNull(map[sound]), 1f, 1f, 0, 0, 1f)
         }
+    }
+    fun pause() = mp?.pause()
+
+    fun resume() = mp?.start()
+
+    fun release() {
+        mp?.release()
+        sp.release()
     }
 }
 

@@ -179,7 +179,11 @@ class GameViewModel : ViewModel() {
                                     newState.copy(blocks = noClear)
                                 }
                             }
-                        Action.Mute -> state.copy(isMute = !state.isMute)
+                        Action.Mute ->
+                            run {
+                                if (state.isMute) SoundUtil.resume() else SoundUtil.pause()
+                                state.copy(isMute = !state.isMute)
+                            }
                         Action.DarkMode -> state.copy(isDarkMode = !state.isDarkMode)
                     }
                 )
