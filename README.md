@@ -49,6 +49,13 @@ https://trevor-pupkin.itch.io/outer-buddies
 ```
 LICENCE: This asset pack can be used in both free and commercial projects. You can modify it to suit your own needs.
 ```
+
+### BGM
+
+https://opengameart.org/content/another-space-background-track
+
+CC0 1.0 Universal (CC0 1.0) Public Domain Dedication
+
 ### SFX
 
 https://opengameart.org/content/63-digital-sound-effects-lasers-phasers-space-etc
