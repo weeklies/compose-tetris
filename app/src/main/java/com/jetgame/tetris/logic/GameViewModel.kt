@@ -111,7 +111,7 @@ class GameViewModel : ViewModel() {
                                 if (!state.dropBlock.isValidInMatrix(state.blocks, state.matrix)) {
                                     SoundUtil.play(state.isMute, SoundType.GameOver)
                                     // Clear screen silently, allowing Game Over to play.
-                                    val _isMuted = state.isMute
+                                    val isMuted = state.isMute
                                     return@run state
                                         .copy(gameStatus = GameStatus.ScreenClearing, isMute = true)
                                         .also {
@@ -120,7 +120,7 @@ class GameViewModel : ViewModel() {
                                                     clearScreen(state = it)
                                                         .copy(
                                                             gameStatus = GameStatus.GameOver,
-                                                            isMute = _isMuted
+                                                            isMute = isMuted
                                                         )
                                                 )
                                             }

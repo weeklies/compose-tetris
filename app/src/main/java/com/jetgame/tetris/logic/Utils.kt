@@ -1,13 +1,8 @@
 package com.jetgame.tetris.logic
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.media.AudioManager
 import android.media.SoundPool
-import android.view.View
-import android.view.WindowManager
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -80,42 +75,23 @@ fun calculateScore(lines: Int) =
         else -> 0
     }
 
-object StatusBarUtil {
-
-    fun transparentStatusBar(activity: Activity) {
-        with(activity) {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            val option = View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            val vis = window.decorView.systemUiVisibility
-            window.decorView.systemUiVisibility = option or vis
-            window.statusBarColor = Color.TRANSPARENT
-        }
-    }
-}
-
-@SuppressLint("StaticFieldLeak")
 object SoundUtil {
-
-    private var _context: Context? = null
     private val sp: SoundPool by lazy {
         SoundPool.Builder().setMaxStreams(4).setMaxStreams(AudioManager.STREAM_MUSIC).build()
     }
-    private val _map = mutableMapOf<SoundType, Int>()
+    private val map = mutableMapOf<SoundType, Int>()
 
     fun init(context: Context) {
-        _context = context
-        Sounds.forEach { _map[it] = sp.load(_context, it.res, 1) }
+        Sounds.forEach { map[it] = sp.load(context, it.res, 1) }
     }
 
     fun release() {
-        _context = null
         sp.release()
     }
 
     fun play(isMute: Boolean, sound: SoundType) {
         if (!isMute) {
-            sp.play(requireNotNull(_map[sound]), 1f, 1f, 0, 0, 1f)
+            sp.play(requireNotNull(map[sound]), 1f, 1f, 0, 0, 1f)
         }
     }
 }
@@ -136,5 +112,5 @@ val Sounds =
         SoundType.Start,
         SoundType.Drop,
         SoundType.Clean,
-        SoundType.GameOver
+        SoundType.GameOver,
     )
