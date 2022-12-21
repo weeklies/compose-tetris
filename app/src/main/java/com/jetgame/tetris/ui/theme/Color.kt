@@ -42,5 +42,3 @@ val md_theme_light_onBackground = Color(0xFF1E1A1D)
 val md_theme_dark_error = Color(0xFFFFB4AB)
 val md_theme_dark_onError = Color(0xFF690005)
 val md_theme_dark_onBackground = Color(0xFFE9E0E4)
-
-val dropBlockColor = Color(0xDD000000)
