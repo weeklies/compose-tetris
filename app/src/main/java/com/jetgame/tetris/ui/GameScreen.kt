@@ -160,6 +160,13 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
                 leftOffset,
                 viewState.isDarkMode,
             )
+            drawGhostBlock(
+                viewState.ghostBlock,
+                brickSize,
+                viewState.matrix,
+                leftOffset,
+                viewState.isDarkMode,
+            )
             drawDropBlock(
                 viewState.dropBlock,
                 brickSize,
@@ -374,6 +381,22 @@ internal fun DrawScope.drawBlocks(
             )
         }
     }
+}
+
+private fun DrawScope.drawGhostBlock(
+    dropBlock: DropBlock,
+    brickSize: Float,
+    matrix: Pair<Int, Int>,
+    leftOffset: Float = 0f,
+    isDark: Boolean,
+) {
+    drawDropBlock(
+        dropBlock,
+        brickSize,
+        matrix,
+        leftOffset,
+        if (isDark) Color.White.copy(alpha = 0.6f) else Color.Black.copy(alpha = 0.25f)
+    )
 }
 
 private fun DrawScope.drawDropBlock(

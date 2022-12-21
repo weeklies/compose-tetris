@@ -63,7 +63,10 @@ class GameViewModel : ViewModel() {
                                 val offset = action.direction.toOffset()
                                 val dropBlock = state.dropBlock.moveBy(offset)
                                 if (dropBlock.isValidInMatrix(state.blocks, state.matrix)) {
-                                    state.copy(dropBlock = dropBlock)
+                                    state.copy(
+                                        dropBlock = dropBlock,
+                                        ghostBlock = determineDroppedBlock(dropBlock, state)
+                                    )
                                 } else {
                                     state
                                 }
@@ -74,7 +77,10 @@ class GameViewModel : ViewModel() {
                                 SoundUtil.play(state.isMute, SoundType.Rotate)
                                 val dropBlock = state.dropBlock.rotate().adjustOffset(state.matrix)
                                 if (dropBlock.isValidInMatrix(state.blocks, state.matrix)) {
-                                    state.copy(dropBlock = dropBlock)
+                                    state.copy(
+                                        dropBlock = dropBlock,
+                                        ghostBlock = determineDroppedBlock(dropBlock, state)
+                                    )
                                 } else {
                                     state
                                 }
@@ -83,16 +89,10 @@ class GameViewModel : ViewModel() {
                             run {
                                 if (!state.isRunning) return@run state
                                 SoundUtil.play(state.isMute, SoundType.Drop)
-                                var i = 0
-                                while (
-                                    state.dropBlock
-                                        .moveBy(0 to ++i)
-                                        .isValidInMatrix(state.blocks, state.matrix)
-                                ) { // nothing to do
-                                }
-                                val dropBlock = state.dropBlock.moveBy(0 to i - 1)
-
-                                state.copy(dropBlock = dropBlock)
+                                state.copy(
+                                    dropBlock = determineDroppedBlock(state.dropBlock, state),
+                                    ghostBlock = Empty
+                                )
                             }
                         Action.GameTick ->
                             run {
@@ -103,7 +103,10 @@ class GameViewModel : ViewModel() {
                                     val dropBlock =
                                         state.dropBlock.moveBy(Direction.Down.toOffset())
                                     if (dropBlock.isValidInMatrix(state.blocks, state.matrix)) {
-                                        return@run state.copy(dropBlock = dropBlock)
+                                        return@run state.copy(
+                                            dropBlock = dropBlock,
+                                            ghostBlock = determineDroppedBlock(dropBlock, state)
+                                        )
                                     }
                                 }
 
@@ -160,6 +163,7 @@ class GameViewModel : ViewModel() {
                                                     state.copy(
                                                         gameStatus = GameStatus.LineClearing,
                                                         dropBlock = Empty,
+                                                        ghostBlock = Empty,
                                                         blocks =
                                                             if (it % 2 == 0) noClear else clearing
                                                     )
@@ -176,7 +180,14 @@ class GameViewModel : ViewModel() {
                                         }
                                     }
                                 } else {
-                                    newState.copy(blocks = noClear)
+                                    val resWithoutGhostBlock = newState.copy(blocks = noClear)
+                                    resWithoutGhostBlock.copy(
+                                        ghostBlock =
+                                            determineDroppedBlock(
+                                                resWithoutGhostBlock.dropBlock,
+                                                resWithoutGhostBlock
+                                            )
+                                    )
                                 }
                             }
                         Action.Mute ->
@@ -189,6 +200,14 @@ class GameViewModel : ViewModel() {
                 )
             }
         }
+    }
+
+    private fun determineDroppedBlock(db: DropBlock, state: ViewState): DropBlock {
+        if (db == Empty) return Empty
+        var i = 0
+        while (db.moveBy(0 to ++i).isValidInMatrix(state.blocks, state.matrix)) { // nothing to do
+        }
+        return db.moveBy(0 to i - 1)
     }
 
     private suspend fun clearScreen(state: ViewState): ViewState {
@@ -220,7 +239,8 @@ class GameViewModel : ViewModel() {
                                 xRange,
                                 y until state.matrix.second,
                             ),
-                        dropBlock = Empty
+                        dropBlock = Empty,
+                        ghostBlock = Empty
                     )
                     .also { newState = it }
             )
@@ -272,6 +292,7 @@ class GameViewModel : ViewModel() {
         val blocks: List<Block> = emptyList(),
         val dropBlock: DropBlock = Empty,
         val dropBlockReserve: List<DropBlock> = emptyList(),
+        val ghostBlock: DropBlock = Empty,
         val matrix: Pair<Int, Int> = MatrixWidth to MatrixHeight,
         val gameStatus: GameStatus = GameStatus.Onboard,
         val score: Int = 0,
