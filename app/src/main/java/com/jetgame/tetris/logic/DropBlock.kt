@@ -93,11 +93,11 @@ fun generateDropAndNautBlocks(matrix: Pair<Int, Int>): List<DropBlock> {
     // Skip the first color, which is Gray.
     val colorIndexes = List(lightBlockColors.size - 1) { it + 1 }.shuffled()
     val dropBlocks =
-        colorIndexes.mapIndexed { i, colorIndex ->
+        colorIndexes.map {
             DropBlock(
                     BlockType[Random.nextInt(BlockType.size)],
                     Offset(Random.nextInt(matrix.first - 1), -1),
-                    colorIndex,
+                    it,
                 )
                 .adjustOffset(matrix, false)
         }
