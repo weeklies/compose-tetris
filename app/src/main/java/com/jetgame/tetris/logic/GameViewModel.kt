@@ -33,7 +33,8 @@ class GameViewModel : ViewModel() {
                                     return@run ViewState(
                                         gameStatus = GameStatus.Running,
                                         isMute = state.isMute,
-                                        isDarkMode = state.isDarkMode
+                                        isDarkMode = state.isDarkMode,
+                                        isInfoDialogOpen = state.isInfoDialogOpen
                                     )
                                 state.copy(gameStatus = GameStatus.ScreenClearing).also {
                                     launch {
@@ -42,7 +43,8 @@ class GameViewModel : ViewModel() {
                                             ViewState(
                                                 gameStatus = GameStatus.Onboard,
                                                 isMute = state.isMute,
-                                                isDarkMode = state.isDarkMode
+                                                isDarkMode = state.isDarkMode,
+                                                isInfoDialogOpen = state.isInfoDialogOpen
                                             )
                                         )
                                     }
@@ -195,6 +197,8 @@ class GameViewModel : ViewModel() {
                                 if (state.isMute) SoundUtil.resume() else SoundUtil.pause()
                                 state.copy(isMute = !state.isMute)
                             }
+                        Action.ToggleInfoDialog ->
+                            state.copy(isInfoDialogOpen = !state.isInfoDialogOpen)
                         Action.DarkMode -> state.copy(isDarkMode = !state.isDarkMode)
                     }
                 )
@@ -298,6 +302,7 @@ class GameViewModel : ViewModel() {
         val score: Int = 0,
         val line: Int = 0,
         val isMute: Boolean = false,
+        val isInfoDialogOpen: Boolean = false,
         val isDarkMode: Boolean = true,
     ) {
         val level: Int
@@ -323,6 +328,7 @@ sealed interface Action {
     object Drop : Action
     object GameTick : Action
     object Mute : Action
+    object ToggleInfoDialog : Action
     object DarkMode : Action
 }
 

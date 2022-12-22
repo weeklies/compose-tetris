@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,9 +35,7 @@ import com.jetgame.tetris.logic.Direction.*
 import com.jetgame.tetris.ui.theme.*
 import kotlin.math.absoluteValue
 import kotlin.math.min
-import kotlinx.coroutines.ObsoleteCoroutinesApi
 
-@ObsoleteCoroutinesApi
 @Composable
 fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
 
@@ -46,6 +45,7 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
     Column(modifier = modifier) {
         GameSettings(
             interactive = interactive,
+            isInfoDialogOpen = viewState.isInfoDialogOpen,
             isMute = viewState.isMute,
             isDarkMode = viewState.isDarkMode,
             isPaused = viewState.isPaused,
@@ -189,6 +189,7 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
 @Composable
 fun GameSettings(
     interactive: Interactive,
+    isInfoDialogOpen: Boolean,
     isMute: Boolean,
     isDarkMode: Boolean,
     isPaused: Boolean,
@@ -196,7 +197,6 @@ fun GameSettings(
 ) {
     Row {
         // Allow the player to stop running game
-
         if (gameStatus == GameStatus.Running || gameStatus == GameStatus.Paused) {
             IconButton({ interactive.onPause() }) {
                 Icon(
@@ -210,6 +210,11 @@ fun GameSettings(
                     "Stop",
                 )
             }
+        } else {
+            IconButton({ interactive.onSettings() }) { Icon(Icons.Rounded.Tune, "Settings") }
+
+            InfoDialog(isInfoDialogOpen, { interactive.onInfo() })
+            IconButton({ interactive.onInfo() }) { Icon(Icons.Outlined.Info, "Instructions") }
         }
 
         Spacer(Modifier.weight(1f))
@@ -444,7 +449,6 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
     )
 }
 
-@ObsoleteCoroutinesApi
 @Composable
 fun PreviewGameScreen(modifier: Modifier = Modifier) {
     GameScreen(modifier, combinedInteractive())

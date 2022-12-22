@@ -19,7 +19,9 @@ constructor(
     val onRestart: () -> Unit,
     val onPause: () -> Unit,
     val onMute: () -> Unit,
-    val onDarkMode: () -> Unit
+    val onDarkMode: () -> Unit,
+    val onInfo: () -> Unit,
+    val onSettings: () -> Unit,
 )
 
 fun combinedInteractive(
@@ -28,8 +30,10 @@ fun combinedInteractive(
     onRestart: () -> Unit = {},
     onPause: () -> Unit = {},
     onMute: () -> Unit = {},
-    onDarkMode: () -> Unit = {}
-) = Interactive(onMove, onRotate, onRestart, onPause, onMute, onDarkMode)
+    onDarkMode: () -> Unit = {},
+    onInfo: () -> Unit = {},
+    onSettings: () -> Unit = {},
+) = Interactive(onMove, onRotate, onRestart, onPause, onMute, onDarkMode, onInfo, onSettings)
 
 enum class Direction {
     Left,
@@ -75,6 +79,15 @@ fun calculateScore(lines: Int) =
         4 -> 1500
         else -> 0
     }
+
+data class GameSettings
+constructor(
+    val setGhostBlock: () -> Unit,
+    val navigateBack: () -> Unit,
+    val setMatrixVisibility: () -> Unit,
+    val setGameSpeed: (Float) -> Unit,
+    val setMatrixSize: (Pair<Int, Int>) -> Unit,
+)
 
 object SoundUtil {
     private val sp: SoundPool by lazy {
