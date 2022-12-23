@@ -80,15 +80,6 @@ fun calculateScore(lines: Int) =
         else -> 0
     }
 
-data class GameSettings
-constructor(
-    val setGhostBlock: () -> Unit,
-    val navigateBack: () -> Unit,
-    val setMatrixVisibility: () -> Unit,
-    val setGameSpeed: (Float) -> Unit,
-    val setMatrixSize: (Pair<Int, Int>) -> Unit,
-)
-
 object SoundUtil {
     private val sp: SoundPool by lazy {
         SoundPool.Builder().setMaxStreams(4).setMaxStreams(AudioManager.STREAM_MUSIC).build()
@@ -96,6 +87,7 @@ object SoundUtil {
     private val map = mutableMapOf<SoundType, Int>()
 
     private var mp: MediaPlayer? = null
+    private var isMute: Boolean = false
 
     fun init(context: Context) {
         Sounds.forEach { map[it] = sp.load(context, it.res, 1) }
@@ -103,13 +95,16 @@ object SoundUtil {
     }
 
     fun play(isMute: Boolean, sound: SoundType) {
+        this.isMute = isMute
         if (!isMute) {
             sp.play(requireNotNull(map[sound]), 1f, 1f, 0, 0, 1f)
         }
     }
     fun pause() = mp?.pause()
 
-    fun resume() = mp?.start()
+    fun resume() {
+        if (!isMute) mp?.start()
+    }
 
     fun release() {
         mp?.release()
