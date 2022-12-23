@@ -29,11 +29,16 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
             ViewState(
                 matrix =
                     Pair(
-                        prefs.getInt(gridHeight, MatrixWidth),
-                        prefs.getInt(gridWidth, MatrixHeight),
+                        prefs.getInt(gridWidth, MatrixWidth),
+                        prefs.getInt(gridHeight, MatrixHeight),
                     ),
                 isDarkMode = prefs.getBoolean(isDarkMode, true),
                 isMute = prefs.getBoolean(isMute, false),
+                useNauts = prefs.getBoolean(useNauts, true),
+                useGhostBlock = prefs.getBoolean(useGhostBlock, true),
+                showGridOutline = prefs.getBoolean(showGridOutline, false),
+                gameSpeed = prefs.getInt(gameSpeed, 1),
+                nautProbability = prefs.getInt(nautProbability, 6),
             )
         )
     val viewState: State<ViewState> = _viewState
@@ -45,29 +50,35 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
             withContext(Dispatchers.Default) {
                 emit(
                     when (action) {
+                        // Game Mechanics
                         Action.Reset ->
                             run {
                                 if (
                                     state.gameStatus == GameStatus.Onboard ||
                                         state.gameStatus == GameStatus.GameOver
-                                )
-                                    return@run ViewState(
+                                ) {
+                                    return@run state.copy(
                                         gameStatus = GameStatus.Running,
-                                        isMute = state.isMute,
-                                        isDarkMode = state.isDarkMode,
-                                        isInfoDialogOpen = state.isInfoDialogOpen,
-                                        matrix = state.matrix
+                                        blocks = emptyList(),
+                                        dropBlock = Empty,
+                                        dropBlockReserve = emptyList(),
+                                        ghostBlock = Empty,
+                                        score = 0,
+                                        line = 0,
                                     )
+                                }
                                 state.copy(gameStatus = GameStatus.ScreenClearing).also {
                                     launch {
                                         clearScreen(state = state)
                                         emit(
-                                            ViewState(
+                                            state.copy(
                                                 gameStatus = GameStatus.Onboard,
-                                                isMute = state.isMute,
-                                                isDarkMode = state.isDarkMode,
-                                                isInfoDialogOpen = state.isInfoDialogOpen,
-                                                matrix = state.matrix
+                                                blocks = emptyList(),
+                                                dropBlock = Empty,
+                                                dropBlockReserve = emptyList(),
+                                                ghostBlock = Empty,
+                                                score = 0,
+                                                line = 0,
                                             )
                                         )
                                     }
@@ -170,7 +181,10 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
                                             (state.dropBlockReserve - state.dropBlockNext).takeIf {
                                                 it.isNotEmpty()
                                             }
-                                                ?: generateDropAndNautBlocks(state.matrix),
+                                                ?: generateDropAndNautBlocks(
+                                                    state.matrix,
+                                                    state.useNauts
+                                                ),
                                         score =
                                             state.score +
                                                 calculateScore(clearedLines) +
@@ -215,20 +229,55 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
                                     )
                                 }
                             }
-                        Action.Mute ->
-                            run {
-                                val newIsMute = !state.isMute
-                                if (state.isMute) SoundUtil.resume(newIsMute) else SoundUtil.pause()
-                                prefs.edit().putBoolean(isMute, newIsMute).apply()
-                                state.copy(isMute = newIsMute)
-                            }
+                        Action.Mute -> {
+                            val newIsMute = !state.isMute
+                            if (state.isMute) SoundUtil.resume(newIsMute) else SoundUtil.pause()
+                            prefs.edit().putBoolean(isMute, newIsMute).apply()
+                            state.copy(isMute = newIsMute)
+                        }
                         Action.ToggleInfoDialog ->
                             state.copy(isInfoDialogOpen = !state.isInfoDialogOpen)
-                        Action.DarkMode ->
-                            run {
-                                prefs.edit().putBoolean(isDarkMode, !state.isDarkMode).apply()
-                                state.copy(isDarkMode = !state.isDarkMode)
-                            }
+                        Action.DarkMode -> {
+                            val value = !state.isDarkMode
+                            prefs.edit().putBoolean(isDarkMode, value).apply()
+                            state.copy(isDarkMode = value)
+                        }
+                        // Game Settings
+                        Action.UseNauts -> {
+                            val value = !state.useNauts
+                            prefs.edit().putBoolean(useNauts, value).apply()
+                            state.copy(useNauts = value)
+                        }
+                        Action.UseGhostBlock -> {
+                            val value = !state.useGhostBlock
+                            prefs.edit().putBoolean(useGhostBlock, value).apply()
+                            state.copy(useGhostBlock = value)
+                        }
+                        Action.ShowGridOutline -> {
+                            val value = !state.showGridOutline
+                            prefs.edit().putBoolean(showGridOutline, value).apply()
+                            state.copy(showGridOutline = value)
+                        }
+                        is Action.GridHeight -> {
+                            val value = action.v
+                            prefs.edit().putInt(gridHeight, value).apply()
+                            state.copy(matrix = Pair(state.matrix.first, value))
+                        }
+                        is Action.GridWidth -> {
+                            val value = action.v
+                            prefs.edit().putInt(gridWidth, value).apply()
+                            state.copy(matrix = Pair(value, state.matrix.second))
+                        }
+                        is Action.GameSpeed -> {
+                            val value = action.v
+                            prefs.edit().putInt(gameSpeed, value).apply()
+                            state.copy(gameSpeed = value)
+                        }
+                        is Action.NautProbability -> {
+                            val value = action.v
+                            prefs.edit().putInt(nautProbability, value).apply()
+                            state.copy(nautProbability = value)
+                        }
                     }
                 )
             }
@@ -333,6 +382,13 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
         val isMute: Boolean,
         val isInfoDialogOpen: Boolean = false,
         val isDarkMode: Boolean,
+
+        // Changed by Game Settings
+        val useNauts: Boolean,
+        val useGhostBlock: Boolean,
+        val showGridOutline: Boolean,
+        val nautProbability: Int, // this will be converted to a decimal. e.g 5 will be 0.6
+        val gameSpeed: Int,
     ) {
         val level: Int
             get() = min(10, 1 + line / 20)
@@ -359,6 +415,13 @@ sealed interface Action {
     object Mute : Action
     object ToggleInfoDialog : Action
     object DarkMode : Action
+    object UseNauts : Action
+    object UseGhostBlock : Action
+    object ShowGridOutline : Action
+    data class NautProbability(val v: Int) : Action
+    data class GridWidth(val v: Int) : Action
+    data class GameSpeed(val v: Int) : Action
+    data class GridHeight(val v: Int) : Action
 }
 
 enum class GameStatus {

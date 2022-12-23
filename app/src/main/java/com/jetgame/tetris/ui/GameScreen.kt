@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jetgame.tetris.logic.*
 import com.jetgame.tetris.logic.Direction.*
 import com.jetgame.tetris.ui.theme.*
@@ -37,10 +36,11 @@ import kotlin.math.absoluteValue
 import kotlin.math.min
 
 @Composable
-fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
-
-    val viewModel = viewModel<GameViewModel>()
-    val viewState = viewModel.viewState.value
+fun GameScreen(
+    modifier: Modifier = Modifier,
+    viewState: GameViewModel.ViewState,
+    interactive: Interactive,
+) {
 
     Column(modifier = modifier) {
         GameSettings(
@@ -141,12 +141,13 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
             // This is used to center the Game Display, along with screenWidth.
             val leftOffset = (screenWidth / brickSize - viewState.matrix.first) / 2
 
-            drawMatrix(
-                brickSize,
-                viewState.matrix,
-                leftOffset,
-                surface,
-            )
+            if (viewState.showGridOutline)
+                drawMatrix(
+                    brickSize,
+                    viewState.matrix,
+                    leftOffset,
+                    surface,
+                )
             drawMatrixBorder(
                 brickSize,
                 viewState.matrix,
@@ -160,13 +161,14 @@ fun GameScreen(modifier: Modifier = Modifier, interactive: Interactive) {
                 leftOffset,
                 viewState.isDarkMode,
             )
-            drawGhostBlock(
-                viewState.ghostBlock,
-                brickSize,
-                viewState.matrix,
-                leftOffset,
-                viewState.isDarkMode,
-            )
+            if (viewState.useGhostBlock)
+                drawGhostBlock(
+                    viewState.ghostBlock,
+                    brickSize,
+                    viewState.matrix,
+                    leftOffset,
+                    viewState.isDarkMode,
+                )
             drawDropBlock(
                 viewState.dropBlock,
                 brickSize,
@@ -213,7 +215,7 @@ fun GameSettings(
         } else {
             IconButton({ interactive.onSettings() }) { Icon(Icons.Rounded.Tune, "Settings") }
 
-            InfoDialog(isInfoDialogOpen, { interactive.onInfo() })
+            InfoDialog(isInfoDialogOpen) { interactive.onInfo() }
             IconButton({ interactive.onInfo() }) { Icon(Icons.Outlined.Info, "Instructions") }
         }
 
@@ -449,10 +451,10 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
     )
 }
 
-@Composable
-fun PreviewGameScreen(modifier: Modifier = Modifier) {
-    GameScreen(modifier, combinedInteractive())
-}
+// @Composable
+// fun PreviewGameScreen(modifier: Modifier = Modifier) {
+//    GameScreen(modifier, combinedInteractive())
+// }
 
 @Preview
 @Composable

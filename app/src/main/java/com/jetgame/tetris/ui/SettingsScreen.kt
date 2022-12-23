@@ -11,12 +11,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jetgame.tetris.logic.*
 
 @Composable
-fun SettingsScreen(modifier: Modifier = Modifier, settings: GameSettings) {
+fun SettingsScreen(
+    modifier: Modifier = Modifier,
+    viewState: GameViewModel.ViewState,
+    settings: GameSettings,
+) {
     Card(
         modifier.padding(10.dp, 40.dp).fillMaxSize(),
         elevation = 0.dp,
@@ -28,40 +31,48 @@ fun SettingsScreen(modifier: Modifier = Modifier, settings: GameSettings) {
         ) {
             Text("Settings", style = typography.h4)
 
+            // TODO - prob, all floats
             SettingsOption(
                 Icons.Outlined.DashboardCustomize,
                 "Nauts",
                 settings.useNauts,
+                viewState.useNauts,
             )
             SettingsOptionInt(
                 Icons.Outlined.Percent,
                 "Naut Probability",
                 settings.setNautProbability,
+                viewState.nautProbability,
             )
             SettingsOption(
                 Icons.Outlined.ArrowDownward,
                 "Ghost Block",
                 settings.useGhostBlock,
+                viewState.useGhostBlock,
             )
             SettingsOption(
                 Icons.Outlined.GridView,
                 "Grid Outline",
                 settings.showGridOutline,
+                viewState.showGridOutline,
             )
             SettingsOptionInt(
                 Icons.Outlined.FastForward,
                 "Game Speed",
                 settings.setGameSpeed,
+                viewState.gameSpeed,
             )
             SettingsOptionInt(
                 Icons.Outlined.Height,
                 "Grid Height",
                 settings.setMatrixHeight,
+                viewState.matrix.second,
             )
             SettingsOptionInt(
                 Icons.Outlined.WidthWide,
                 "Grid Width",
                 settings.setMatrixWidth,
+                viewState.matrix.first,
             )
 
             Spacer(Modifier.width(8.dp))
@@ -71,11 +82,7 @@ fun SettingsScreen(modifier: Modifier = Modifier, settings: GameSettings) {
 }
 
 @Composable
-fun SettingsOption(
-    icon: ImageVector,
-    name: String,
-    onClick: (Boolean) -> Unit,
-) {
+fun SettingsOption(icon: ImageVector, name: String, onClick: (Boolean) -> Unit, checked: Boolean) {
 
     Row(
         Modifier.fillMaxWidth().padding(horizontal = 4.dp),
@@ -87,7 +94,7 @@ fun SettingsOption(
 
         Spacer(Modifier.weight(1f))
 
-        Switch(checked = true, onCheckedChange = { onClick(it) })
+        Switch(checked, onCheckedChange = { onClick(it) })
     }
 }
 
@@ -95,7 +102,8 @@ fun SettingsOption(
 fun SettingsOptionInt(
     icon: ImageVector,
     name: String,
-    onClick: (Float) -> Unit,
+    onClick: (Int) -> Unit,
+    value: Int,
 ) {
 
     Row(
@@ -111,20 +119,14 @@ fun SettingsOptionInt(
         // TODO: make this functional, and set a limit to the range of permitted values.
         OutlinedButton(
             modifier = Modifier.defaultMinSize(minWidth = 40.dp),
-            onClick = { onClick(1f) },
+            onClick = { onClick(value) },
             contentPadding = PaddingValues(0.dp),
             border = BorderStroke(0.dp, Color.Black)
         ) {
             Text(
-                "1",
+                value.toString(),
                 style = typography.h5,
             )
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview2() {
-    SettingsScreen(settings = GameSettings({}, {}, {}, {}, {}, {}, {}, {}))
 }
