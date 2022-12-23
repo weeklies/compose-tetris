@@ -17,13 +17,20 @@ fun InfoDialog(isOpen: Boolean, onDismiss: () -> Unit) {
             onDismissRequest = onDismiss,
             backgroundColor = colors.background,
             title = {
-                Box(Modifier.padding(vertical = 10.dp)) { Text("Guide", style = typography.h5) }
+                Box(Modifier.padding(vertical = 10.dp)) { Text("About", style = typography.h5) }
             },
             text = {
                 Text(
                     text =
                         """
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum imperdiet tincidunt molestie. Donec quis tristique leo. 
+                            Tetrominauts is a fun spin on the traditional block puzzle game, combining tetrominoes with tetromi(nots). 
+                             
+                            Send your scores to outer space, astronaut!
+                            
+                            Controls
+                            • Rotate: Tap or Swipe Up
+                            • Move: Swipe Left or Right
+                            • Drop: Swipe Down
         """
                             .trimIndent(),
                     style = typography.h6
