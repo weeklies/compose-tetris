@@ -37,7 +37,7 @@ private val DarkColorPalette =
     )
 
 @Composable
-fun ComposeTetrisTheme(darkTheme: Boolean = true, content: @Composable () -> Unit) {
+fun TetrominautsTheme(darkTheme: Boolean = true, content: @Composable () -> Unit) {
     MaterialTheme(
         colors = if (darkTheme) DarkColorPalette else LightColorPalette,
         typography = Typography(defaultFontFamily),

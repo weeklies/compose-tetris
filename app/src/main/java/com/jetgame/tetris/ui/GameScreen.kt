@@ -323,7 +323,7 @@ private fun DrawScope.drawText(
         }
     }
     if (gameStatus == GameStatus.Onboard) {
-        drawText("Tetrominot!", "Tap to start", 80f)
+        drawText("Tetrominauts!", "Tap to start", 80f)
     } else if (gameStatus == GameStatus.GameOver) {
         drawText("Game Over", "Tap to restart", 80f)
     }

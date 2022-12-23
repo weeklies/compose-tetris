@@ -25,7 +25,7 @@ import com.jetgame.tetris.ui.GameBackground
 import com.jetgame.tetris.ui.GameScreen
 import com.jetgame.tetris.ui.PreviewGameScreen
 import com.jetgame.tetris.ui.SettingsScreen
-import com.jetgame.tetris.ui.theme.ComposeTetrisTheme
+import com.jetgame.tetris.ui.theme.TetrominautsTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
                         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
                     }
 
-                    ComposeTetrisTheme(viewState.isDarkMode) {
+                    TetrominautsTheme(viewState.isDarkMode) {
                         Scaffold { padding ->
                             GameBackground(Modifier.padding(padding)) { modifier ->
                                 GameScreen(
@@ -90,7 +90,9 @@ class MainActivity : ComponentActivity() {
                                                 }
                                             },
                                             onRestart = { viewModel.dispatch(Action.Reset) },
-                                            onInfo = { viewModel.dispatch(Action.ToggleInfoDialog) },
+                                            onInfo = {
+                                                viewModel.dispatch(Action.ToggleInfoDialog)
+                                            },
                                             onSettings = {
                                                 navController.navigate(
                                                     "settings/${viewState.isDarkMode}"
@@ -108,7 +110,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val isDark = it.arguments?.getBoolean("isDark") ?: true
 
-                    ComposeTetrisTheme(isDark) {
+                    TetrominautsTheme(isDark) {
                         Scaffold { padding ->
                             GameBackground(Modifier.padding(padding)) { modifier ->
                                 SettingsScreen(
@@ -149,5 +151,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    ComposeTetrisTheme { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
+    TetrominautsTheme() { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
 }
