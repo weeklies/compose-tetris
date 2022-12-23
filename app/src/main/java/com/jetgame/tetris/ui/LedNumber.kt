@@ -6,6 +6,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,7 +18,8 @@ fun LedNumber(modifier: Modifier = Modifier, num: Int, digits: Int, fillZero: Bo
     val textSize = 16.sp
     val textWidth = 8.dp
     Box(modifier.padding(horizontal = 6.dp)) {
-        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+        // Hide the background 8 from screen readers
+        Row(modifier = Modifier.align(Alignment.CenterEnd).clearAndSetSemantics { disabled() }) {
             repeat(digits) {
                 Text(
                     "8",
