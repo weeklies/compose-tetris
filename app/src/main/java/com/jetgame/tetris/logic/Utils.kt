@@ -87,7 +87,6 @@ object SoundUtil {
     private val map = mutableMapOf<SoundType, Int>()
 
     private var mp: MediaPlayer? = null
-    private var isMute: Boolean = false
 
     fun init(context: Context) {
         Sounds.forEach { map[it] = sp.load(context, it.res, 1) }
@@ -95,14 +94,13 @@ object SoundUtil {
     }
 
     fun play(isMute: Boolean, sound: SoundType) {
-        this.isMute = isMute
         if (!isMute) {
             sp.play(requireNotNull(map[sound]), 1f, 1f, 0, 0, 1f)
         }
     }
     fun pause() = mp?.pause()
 
-    fun resume() {
+    fun resume(isMute: Boolean) {
         if (!isMute) mp?.start()
     }
 

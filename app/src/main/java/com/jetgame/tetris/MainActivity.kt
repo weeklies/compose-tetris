@@ -6,9 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,8 +28,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val prefs = getPreferences(MODE_PRIVATE)
         SoundUtil.init(this)
 
         setContent {
@@ -41,7 +41,7 @@ class MainActivity : ComponentActivity() {
                 startDestination = "game",
             ) {
                 composable("game") {
-                    val viewModel = viewModel<GameViewModel>()
+                    val viewModel = viewModel<GameViewModel>(factory = GameViewModelFactory(prefs))
                     val viewState = viewModel.viewState.value
 
                     LaunchedEffect(key1 = Unit) {
@@ -107,23 +107,40 @@ class MainActivity : ComponentActivity() {
                 composable(
                     "settings/{isDark}",
                     arguments = listOf(navArgument("isDark") { type = NavType.BoolType })
-                ) {
-                    val isDark = it.arguments?.getBoolean("isDark") ?: true
+                ) { stack ->
+                    val isDark = stack.arguments?.getBoolean("isDark") ?: true
 
                     TetrominautsTheme(isDark) {
                         Scaffold { padding ->
                             GameBackground(Modifier.padding(padding)) { modifier ->
                                 SettingsScreen(
                                     modifier,
-                                    settings =
-                                        GameSettings(
-                                            setGhostBlock = {},
-                                            navigateBack = { navController.popBackStack() },
-                                            setMatrixVisibility = {},
-                                            setGameSpeed = {},
-                                            setMatrixHeight = {},
-                                            setMatrixWidth = {},
-                                        )
+                                    GameSettings(
+                                        useNauts = {
+                                            prefs.edit().putBoolean(useNauts, it).apply()
+                                        },
+                                        useGhostBlock = {
+                                            prefs.edit().putBoolean(useGhostBlock, it).apply()
+                                        },
+                                        showGridOutline = {
+                                            prefs.edit().putBoolean(showGridOutline, it).apply()
+                                        },
+                                        setNautProbability = {
+                                            prefs.edit().putFloat(nautsProbability, it).apply()
+                                        },
+                                        setGameSpeed = {
+                                            prefs.edit().putFloat(gameSpeed, it).apply()
+                                        },
+                                        setMatrixHeight = {
+                                            val h = it.toInt()
+                                            prefs.edit().putInt(gridHeight, h).apply()
+                                        },
+                                        setMatrixWidth = {
+                                            val w = it.toInt()
+                                            prefs.edit().putInt(gridWidth, w).apply()
+                                        },
+                                        navigateBack = { navController.popBackStack() },
+                                    )
                                 )
                             }
                         }
@@ -140,7 +157,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        SoundUtil.resume()
+        val prefs = getPreferences(MODE_PRIVATE)
+        SoundUtil.resume(prefs.getBoolean(isMute, false))
     }
 
     override fun onDestroy() {

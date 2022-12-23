@@ -1,9 +1,11 @@
 package com.jetgame.tetris.logic
 
+import android.content.SharedPreferences
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.jetgame.tetris.logic.DropBlock.Companion.Empty
 import kotlin.math.min
@@ -12,9 +14,28 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class GameViewModel : ViewModel() {
+class GameViewModelFactory constructor(private val sharedPreferences: SharedPreferences) :
+    ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return GameViewModel(sharedPreferences) as T
+    }
+}
 
-    private val _viewState: MutableState<ViewState> = mutableStateOf(ViewState())
+class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
+
+    private val _viewState: MutableState<ViewState> =
+        mutableStateOf(
+            ViewState(
+                matrix =
+                    Pair(
+                        prefs.getInt(gridHeight, MatrixWidth),
+                        prefs.getInt(gridWidth, MatrixHeight),
+                    ),
+                isDarkMode = prefs.getBoolean(isDarkMode, true),
+                isMute = prefs.getBoolean(isMute, false),
+            )
+        )
     val viewState: State<ViewState> = _viewState
 
     fun dispatch(action: Action) = reduce(viewState.value, action)
@@ -34,7 +55,8 @@ class GameViewModel : ViewModel() {
                                         gameStatus = GameStatus.Running,
                                         isMute = state.isMute,
                                         isDarkMode = state.isDarkMode,
-                                        isInfoDialogOpen = state.isInfoDialogOpen
+                                        isInfoDialogOpen = state.isInfoDialogOpen,
+                                        matrix = state.matrix
                                     )
                                 state.copy(gameStatus = GameStatus.ScreenClearing).also {
                                     launch {
@@ -44,7 +66,8 @@ class GameViewModel : ViewModel() {
                                                 gameStatus = GameStatus.Onboard,
                                                 isMute = state.isMute,
                                                 isDarkMode = state.isDarkMode,
-                                                isInfoDialogOpen = state.isInfoDialogOpen
+                                                isInfoDialogOpen = state.isInfoDialogOpen,
+                                                matrix = state.matrix
                                             )
                                         )
                                     }
@@ -194,12 +217,18 @@ class GameViewModel : ViewModel() {
                             }
                         Action.Mute ->
                             run {
-                                if (state.isMute) SoundUtil.resume() else SoundUtil.pause()
-                                state.copy(isMute = !state.isMute)
+                                val newIsMute = !state.isMute
+                                if (state.isMute) SoundUtil.resume(newIsMute) else SoundUtil.pause()
+                                prefs.edit().putBoolean(isMute, newIsMute).apply()
+                                state.copy(isMute = newIsMute)
                             }
                         Action.ToggleInfoDialog ->
                             state.copy(isInfoDialogOpen = !state.isInfoDialogOpen)
-                        Action.DarkMode -> state.copy(isDarkMode = !state.isDarkMode)
+                        Action.DarkMode ->
+                            run {
+                                prefs.edit().putBoolean(isDarkMode, !state.isDarkMode).apply()
+                                state.copy(isDarkMode = !state.isDarkMode)
+                            }
                     }
                 )
             }
@@ -297,13 +326,13 @@ class GameViewModel : ViewModel() {
         val dropBlock: DropBlock = Empty,
         val dropBlockReserve: List<DropBlock> = emptyList(),
         val ghostBlock: DropBlock = Empty,
-        val matrix: Pair<Int, Int> = MatrixWidth to MatrixHeight,
+        val matrix: Pair<Int, Int>,
         val gameStatus: GameStatus = GameStatus.Onboard,
         val score: Int = 0,
         val line: Int = 0,
-        val isMute: Boolean = false,
+        val isMute: Boolean,
         val isInfoDialogOpen: Boolean = false,
-        val isDarkMode: Boolean = true,
+        val isDarkMode: Boolean,
     ) {
         val level: Int
             get() = min(10, 1 + line / 20)
