@@ -3,11 +3,13 @@ package com.jetgame.tetris
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -19,6 +21,7 @@ import androidx.navigation.navArgument
 import com.jetgame.tetris.logic.*
 import com.jetgame.tetris.ui.GameBackground
 import com.jetgame.tetris.ui.GameScreen
+import com.jetgame.tetris.ui.PreviewGameScreen
 import com.jetgame.tetris.ui.SettingsScreen
 import com.jetgame.tetris.ui.theme.TetrominautsTheme
 import kotlinx.coroutines.delay
@@ -45,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
                     LaunchedEffect(key1 = Unit) {
                         while (isActive) {
-                            delay(650L - 55 * (viewState.level - 1))
+                            delay(1928L / viewState.gameSpeed)
                             viewModel.dispatch(Action.GameTick)
                         }
                     }
@@ -161,8 +164,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// @Preview(showBackground = true)
-// @Composable
-// fun DefaultPreview() {
-//    TetrominautsTheme { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
-// }
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    TetrominautsTheme { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
+}

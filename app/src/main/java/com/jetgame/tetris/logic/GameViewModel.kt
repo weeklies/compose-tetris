@@ -37,7 +37,7 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
                 useNauts = prefs.getBoolean(useNauts, true),
                 useGhostBlock = prefs.getBoolean(useGhostBlock, true),
                 showGridOutline = prefs.getBoolean(showGridOutline, false),
-                gameSpeed = prefs.getInt(gameSpeed, 1),
+                gameSpeed = prefs.getInt(gameSpeed, 3),
                 nautProbability = prefs.getInt(nautProbability, 6),
             )
         )
@@ -183,7 +183,8 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
                                             }
                                                 ?: generateDropAndNautBlocks(
                                                     state.matrix,
-                                                    state.useNauts
+                                                    state.useNauts,
+                                                    state.nautProbability,
                                                 ),
                                         score =
                                             state.score +

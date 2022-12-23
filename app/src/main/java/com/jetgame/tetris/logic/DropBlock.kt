@@ -89,7 +89,11 @@ fun DropBlock.isValidInMatrix(blocks: List<Block>, matrix: Pair<Int, Int>): Bool
     }
 }
 
-fun generateDropAndNautBlocks(matrix: Pair<Int, Int>, useNauts: Boolean): List<DropBlock> {
+fun generateDropAndNautBlocks(
+    matrix: Pair<Int, Int>,
+    useNauts: Boolean,
+    nautProbabilityInt: Int
+): List<DropBlock> {
     // Skip the first color, which is Gray.
     val colorIndexes = List(lightBlockColors.size - 1) { it + 1 }.shuffled()
     val dropBlocks =
@@ -102,7 +106,8 @@ fun generateDropAndNautBlocks(matrix: Pair<Int, Int>, useNauts: Boolean): List<D
                 .adjustOffset(matrix, false)
         }
 
-    val nautProbability = 1.0
+    val nautProbability = nautProbabilityInt / 10
+
     return if (!useNauts || nautProbability <= Random.nextDouble()) {
         dropBlocks
     } else {

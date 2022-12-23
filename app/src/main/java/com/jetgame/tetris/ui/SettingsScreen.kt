@@ -1,15 +1,13 @@
 package com.jetgame.tetris.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.jetgame.tetris.logic.*
@@ -31,18 +29,11 @@ fun SettingsScreen(
         ) {
             Text("Settings", style = typography.h4)
 
-            // TODO - prob, all floats
             SettingsOption(
                 Icons.Outlined.DashboardCustomize,
                 "Nauts",
                 settings.useNauts,
                 viewState.useNauts,
-            )
-            SettingsOptionInt(
-                Icons.Outlined.Percent,
-                "Naut Probability",
-                settings.setNautProbability,
-                viewState.nautProbability,
             )
             SettingsOption(
                 Icons.Outlined.ArrowDownward,
@@ -56,23 +47,33 @@ fun SettingsScreen(
                 settings.showGridOutline,
                 viewState.showGridOutline,
             )
-            SettingsOptionInt(
+            SettingsOptionSlider(
                 Icons.Outlined.FastForward,
                 "Game Speed",
                 settings.setGameSpeed,
                 viewState.gameSpeed,
+                1f..10f,
             )
-            SettingsOptionInt(
+            SettingsOptionSlider(
+                Icons.Outlined.Percent,
+                "Naut Probability",
+                settings.setNautProbability,
+                viewState.nautProbability,
+                1f..10f
+            )
+            SettingsOptionSlider(
                 Icons.Outlined.Height,
                 "Grid Height",
                 settings.setMatrixHeight,
                 viewState.matrix.second,
+                20f..30f
             )
-            SettingsOptionInt(
+            SettingsOptionSlider(
                 Icons.Outlined.WidthWide,
                 "Grid Width",
                 settings.setMatrixWidth,
                 viewState.matrix.first,
+                8f..16f
             )
 
             Spacer(Modifier.width(8.dp))
@@ -99,34 +100,38 @@ fun SettingsOption(icon: ImageVector, name: String, onClick: (Boolean) -> Unit, 
 }
 
 @Composable
-fun SettingsOptionInt(
+fun SettingsOptionSlider(
     icon: ImageVector,
     name: String,
     onClick: (Int) -> Unit,
     value: Int,
+    range: ClosedFloatingPointRange<Float>
 ) {
+    var v by remember { mutableStateOf(value.toFloat()) }
 
-    Row(
-        Modifier.fillMaxWidth().padding(horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(icon, name, Modifier.size(30.dp))
-        Spacer(Modifier.width(20.dp))
-        Text(name, style = typography.h6)
-
-        Spacer(Modifier.weight(1f))
-
-        // TODO: make this functional, and set a limit to the range of permitted values.
-        OutlinedButton(
-            modifier = Modifier.defaultMinSize(minWidth = 40.dp),
-            onClick = { onClick(value) },
-            contentPadding = PaddingValues(0.dp),
-            border = BorderStroke(0.dp, Color.Black)
+    Column {
+        Row(
+            Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            Icon(icon, name, Modifier.size(30.dp))
+            Spacer(Modifier.width(20.dp))
+            Text(name, style = typography.h6)
+
+            Spacer(Modifier.weight(1f))
+
             Text(
                 value.toString(),
                 style = typography.h5,
             )
         }
+
+        Slider(
+            value = v,
+            steps = 6,
+            valueRange = range,
+            onValueChange = { v = it },
+            onValueChangeFinished = { onClick(v.toInt()) },
+        )
     }
 }

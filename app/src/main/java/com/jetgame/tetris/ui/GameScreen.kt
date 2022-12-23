@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jetgame.tetris.logic.*
 import com.jetgame.tetris.logic.Direction.*
 import com.jetgame.tetris.ui.theme.*
@@ -451,10 +452,14 @@ private fun DrawScope.drawBrick(brickSize: Float, offset: Offset, color: Color) 
     )
 }
 
-// @Composable
-// fun PreviewGameScreen(modifier: Modifier = Modifier) {
-//    GameScreen(modifier, combinedInteractive())
-// }
+@Composable
+fun PreviewGameScreen(modifier: Modifier = Modifier) {
+    GameScreen(
+        modifier,
+        viewModel<GameViewModel>().viewState.value,
+        combinedInteractive(),
+    )
+}
 
 @Preview
 @Composable
