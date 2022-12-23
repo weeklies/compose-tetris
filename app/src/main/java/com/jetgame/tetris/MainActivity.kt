@@ -114,14 +114,15 @@ class MainActivity : ComponentActivity() {
                         Scaffold { padding ->
                             GameBackground(Modifier.padding(padding)) { modifier ->
                                 SettingsScreen(
-                                    Modifier,
+                                    modifier,
                                     settings =
                                         GameSettings(
                                             setGhostBlock = {},
                                             navigateBack = { navController.popBackStack() },
                                             setMatrixVisibility = {},
                                             setGameSpeed = {},
-                                            setMatrixSize = {}
+                                            setMatrixHeight = {},
+                                            setMatrixWidth = {},
                                         )
                                 )
                             }
@@ -151,5 +152,5 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    TetrominautsTheme() { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
+    TetrominautsTheme { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
 }
