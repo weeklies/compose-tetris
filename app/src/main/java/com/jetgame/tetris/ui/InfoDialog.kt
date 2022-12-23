@@ -12,9 +12,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun InfoDialog(isOpen: Boolean, onDismiss: () -> Unit) {
-    if (!isOpen)
+    if (isOpen)
         AlertDialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = onDismiss,
             backgroundColor = colors.background,
             title = {
                 Box(Modifier.padding(vertical = 10.dp)) { Text("Guide", style = typography.h5) }
