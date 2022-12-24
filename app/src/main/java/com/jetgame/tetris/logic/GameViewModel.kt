@@ -39,6 +39,7 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
                 showGridOutline = prefs.getBoolean(showGridOutline, false),
                 gameSpeed = prefs.getInt(gameSpeed, 3),
                 nautProbability = prefs.getInt(nautProbability, 6),
+                showBackgroundArt = prefs.getBoolean(showBackgroundArt, true),
             )
         )
     val viewState: State<ViewState> = _viewState
@@ -259,6 +260,11 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
                             prefs.edit().putBoolean(showGridOutline, value).apply()
                             state.copy(showGridOutline = value)
                         }
+                        Action.ShowBackgroundArt -> {
+                            val value = !state.showBackgroundArt
+                            prefs.edit().putBoolean(showBackgroundArt, value).apply()
+                            state.copy(showBackgroundArt = value)
+                        }
                         is Action.GridHeight -> {
                             val value = action.v
                             prefs.edit().putInt(gridHeight, value).apply()
@@ -383,6 +389,7 @@ class GameViewModel(private val prefs: SharedPreferences) : ViewModel() {
         val isMute: Boolean,
         val isInfoDialogOpen: Boolean = false,
         val isDarkMode: Boolean,
+        val showBackgroundArt: Boolean,
 
         // Changed by Game Settings
         val useNauts: Boolean,
@@ -419,6 +426,7 @@ sealed interface Action {
     object UseNauts : Action
     object UseGhostBlock : Action
     object ShowGridOutline : Action
+    object ShowBackgroundArt : Action
     data class NautProbability(val v: Int) : Action
     data class GridWidth(val v: Int) : Action
     data class GameSpeed(val v: Int) : Action

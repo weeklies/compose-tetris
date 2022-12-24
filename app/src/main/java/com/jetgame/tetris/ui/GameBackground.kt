@@ -36,14 +36,18 @@ fun GameBackground(
     // Game Display
     // TODO: make this light mode compatible
     Box(modifier.clearAndSetSemantics { disabled() }) {
-        if (viewState.isDarkMode) AnimatedNebula()
-        if (viewState.isDarkMode) AnimatedShipsAndAsteroids()
+        if (viewState.showBackgroundArt && viewState.isDarkMode) {
+            AnimatedNebula()
+            AnimatedPlanet1()
+            AnimatedPlanet2()
+            AnimatedShipsAndAsteroids()
+        }
         AndroidView(
             factory = {
                 val view = LayoutInflater.from(it).inflate(R.layout.animated_stars, null, false)
 
-                val stars_white = view.findViewById<AnimatedStarsView>(R.id.stars_white)
-                stars_white.onStart()
+                val stars = view.findViewById<AnimatedStarsView>(R.id.stars_white)
+                stars.onStart()
                 view
             }
         )
@@ -76,18 +80,91 @@ fun AnimatedNebula() {
                 )
         )
 
-    Image(
-        painter = painterResource(id = R.drawable.nebula),
-        contentDescription = "nebula",
-        alpha = 0.40f,
-        modifier = Modifier.fillMaxHeight().graphicsLayer { rotationZ = angle },
-        alignment = Alignment.BottomCenter,
-    )
+    Row(Modifier.fillMaxSize()) {
+        Box(Modifier.weight(3f)) {
+            Image(
+                painter = painterResource(id = R.drawable.nebula),
+                contentDescription = "",
+                alpha = 0.50f,
+                modifier =
+                    Modifier.offset((-50).dp, 60.dp).fillMaxSize().graphicsLayer {
+                        rotationZ = angle
+                    },
+                alignment = Alignment.BottomStart,
+            )
+        }
+        Spacer(Modifier.weight(1f))
+    }
+}
+
+// The planet on the center right.
+@Composable
+fun AnimatedPlanet1() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val angle by
+        infiniteTransition.animateFloat(
+            initialValue = 0F,
+            targetValue = 360F,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            200 /* seconds */ * 1000,
+                            easing = LinearEasing,
+                        ),
+                    repeatMode = RepeatMode.Restart,
+                )
+        )
+
+    Row(Modifier.fillMaxSize()) {
+        Spacer(Modifier.weight(3f))
+        Box(Modifier.weight(1f)) {
+            Image(
+                painter = painterResource(id = planets1.random()),
+                contentDescription = "",
+                alpha = 0.50f,
+                modifier =
+                    Modifier.offset(40.dp, 0.dp).fillMaxSize().graphicsLayer { rotationZ = angle },
+            )
+        }
+    }
+}
+
+// The planet on the top left.
+@Composable
+fun AnimatedPlanet2() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val angle by
+        infiniteTransition.animateFloat(
+            initialValue = 0F,
+            targetValue = 360F,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            180 /* seconds */ * 1000,
+                            easing = LinearEasing,
+                        ),
+                    repeatMode = RepeatMode.Restart,
+                )
+        )
+
+    Row(Modifier.fillMaxSize()) {
+        Box(Modifier.weight(1f)) {
+            Image(
+                painter = painterResource(id = planets2.random()),
+                contentDescription = "",
+                alpha = 0.60f,
+                modifier = Modifier.offset((-35).dp, 80.dp).graphicsLayer { rotationZ = angle },
+            )
+        }
+        Spacer(Modifier.weight(3f))
+    }
 }
 
 @Composable
 fun AnimatedShipsAndAsteroids() {
-    val count = Random.nextInt(2, 5)
+    val count = Random.nextInt(3, 5)
     val ships = shipsAndAsteroids.shuffled().take(count)
     Box(modifier = Modifier.fillMaxSize()) {
         repeat(count) {
@@ -112,7 +189,7 @@ fun Ship(
     val width = LocalConfiguration.current.screenWidthDp
     val height = LocalConfiguration.current.screenHeightDp
 
-    val speedRandom = Random.nextInt(20 * 1000, 240 * 1000)
+    val speedRandom = Random.nextInt(20 * 1000, 200 * 1000)
 
     val state = remember { mutableStateOf(ShipState.Show) }
     val rotationDegrees = remember { Random.nextInt(0, 360).toFloat() }
@@ -192,4 +269,19 @@ private val shipsAndAsteroids =
         R.drawable.ship_purple_stroked,
         R.drawable.ship_orange_stroked,
         R.drawable.ship_yellow_stroked,
+    )
+
+private val planets1 =
+    listOf(
+        R.drawable.aplanet1,
+        R.drawable.aplanet2,
+        R.drawable.aplanet3,
+        R.drawable.aplanet4,
+    )
+private val planets2 =
+    listOf(
+        R.drawable.planet1,
+        R.drawable.planet2,
+        R.drawable.planet3,
+        R.drawable.planet4,
     )

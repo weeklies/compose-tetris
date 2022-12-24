@@ -136,6 +136,9 @@ class MainActivity : ComponentActivity() {
                                         setMatrixWidth = {
                                             viewModel.dispatch(Action.GridWidth(it))
                                         },
+                                        showBackgroundArt = {
+                                            viewModel.dispatch(Action.ShowBackgroundArt)
+                                        },
                                         navigateBack = { navController.popBackStack() },
                                     )
                                 )

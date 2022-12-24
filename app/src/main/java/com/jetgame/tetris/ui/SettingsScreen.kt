@@ -19,7 +19,7 @@ fun SettingsScreen(
     settings: GameSettings,
 ) {
     Card(
-        modifier.padding(10.dp, 40.dp).fillMaxSize(),
+        modifier.padding(10.dp, 10.dp).fillMaxSize(),
         elevation = 0.dp,
     ) {
         Column(
@@ -46,6 +46,12 @@ fun SettingsScreen(
                 "Grid Outline",
                 settings.showGridOutline,
                 viewState.showGridOutline,
+            )
+            SettingsOption(
+                Icons.Outlined.Public,
+                "Background Art",
+                settings.showBackgroundArt,
+                viewState.showBackgroundArt,
             )
             SettingsOptionSlider(
                 Icons.Outlined.FastForward,
