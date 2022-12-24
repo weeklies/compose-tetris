@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     }
                     TetrominautsTheme(viewState.isDarkMode) {
                         Scaffold { padding ->
-                            GameBackground(Modifier.padding(padding)) { modifier ->
+                            GameBackground(Modifier.padding(padding), viewState) { modifier ->
                                 GameScreen(
                                     modifier,
                                     viewState,
@@ -114,7 +114,7 @@ class MainActivity : ComponentActivity() {
 
                     TetrominautsTheme(isDark) {
                         Scaffold { padding ->
-                            GameBackground(Modifier.padding(padding)) { modifier ->
+                            GameBackground(Modifier.padding(padding), viewState) { modifier ->
                                 SettingsScreen(
                                     modifier,
                                     viewState,
@@ -167,5 +167,9 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    TetrominautsTheme { GameBackground { PreviewGameScreen(Modifier.fillMaxSize()) } }
+    TetrominautsTheme {
+        GameBackground(viewState = viewModel<GameViewModel>().viewState.value) {
+            PreviewGameScreen(Modifier.fillMaxSize())
+        }
+    }
 }

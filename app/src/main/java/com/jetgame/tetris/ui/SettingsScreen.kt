@@ -73,7 +73,7 @@ fun SettingsScreen(
                 "Grid Width",
                 settings.setMatrixWidth,
                 viewState.matrix.first,
-                8f..16f
+                8f..18f
             )
 
             Spacer(Modifier.width(8.dp))
@@ -128,7 +128,7 @@ fun SettingsOptionSlider(
 
         Slider(
             value = v,
-            steps = 6,
+            steps = 9,
             valueRange = range,
             onValueChange = { v = it },
             onValueChangeFinished = { onClick(v.toInt()) },
