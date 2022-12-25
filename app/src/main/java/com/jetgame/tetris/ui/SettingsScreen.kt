@@ -2,6 +2,7 @@ package com.jetgame.tetris.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.MaterialTheme.typography
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -101,7 +102,15 @@ fun SettingsOption(icon: ImageVector, name: String, onClick: (Boolean) -> Unit, 
 
         Spacer(Modifier.weight(1f))
 
-        Switch(checked, onCheckedChange = { onClick(it) })
+        Switch(
+            checked,
+            onCheckedChange = { onClick(it) },
+            colors =
+                SwitchDefaults.colors(
+                    checkedThumbColor = colors.primary,
+                    checkedTrackColor = colors.primarySurface,
+                )
+        )
     }
 }
 
