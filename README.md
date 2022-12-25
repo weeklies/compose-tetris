@@ -7,10 +7,6 @@ Note: README.md is under construction.
 
 A space-themed, Tetris-like game on tetrominoes and tetromi(nots).
 
-A fork of [vitaviva's Compose Tetris app](https://github.com/vitaviva/compose-tetris), with
-significant changes in functionality.
-
-
 <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width=110 align=left hspace="10" vspace="10"  >
 
 - Gesture controls
@@ -18,17 +14,23 @@ significant changes in functionality.
 - Light and night mode
 - Background animations
 
-#### Game Rules：
-
-- 100 points for 1 line, 300 points for 2 lines, 700 points for 3 lines, 1500 points for 4 lines
-
-<br/>
+A fork of [vitaviva's Compose Tetris app](https://github.com/vitaviva/compose-tetris), with
+significant changes in functionality.
 
 ## Screenshots
 
-<img src="/results/screenshot.gif" width="480">
+<img src="/results/screenshot.gif" height="600">
+<img src="/results/s0.png" height="600">
+<img src="/results/s1.png" height="600">
+<img src="/results/s2.png" height="600">
 
-# Attribution
+## License
+
+https://github.com/weeklies/compose-tetris/blob/main/LICENSE.md
+
+Common Clause License (MIT)
+
+## Attribution
 
 ### App Icon
 
@@ -78,6 +80,8 @@ but is not mandatory.
 ```
 
 ### Source Code
+
+https://github.com/vitaviva/compose-tetris
 
 ```
 MIT License
