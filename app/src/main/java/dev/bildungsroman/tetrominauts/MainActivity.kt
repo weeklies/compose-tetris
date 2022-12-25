@@ -18,6 +18,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
 import dev.bildungsroman.tetrominauts.logic.*
 import dev.bildungsroman.tetrominauts.ui.GameBackground
 import dev.bildungsroman.tetrominauts.ui.GameScreen
@@ -31,10 +33,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SoundUtil.init(this)
+        val reviewManager = ReviewManagerFactory.create(this)
 
         setContent {
             val navController = rememberNavController()
-
             val prefs = getPreferences(MODE_PRIVATE)
             val viewModel = viewModel<GameViewModel>(factory = GameViewModelFactory(prefs))
 
@@ -44,6 +46,8 @@ class MainActivity : ComponentActivity() {
             ) {
                 composable("game") {
                     val viewState = viewModel.viewState.value
+
+                    if (viewState.gameStatus == GameStatus.GameOver) requestReview(reviewManager)
 
                     LaunchedEffect(key1 = Unit) {
                         while (isActive) {
@@ -144,6 +148,22 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    private fun requestReview(manager: ReviewManager) {
+        val request = manager.requestReviewFlow()
+        request.addOnCompleteListener { task ->
+            // Do nothing if task is unsuccessful.
+            if (task.isSuccessful) {
+                val reviewInfo = task.result
+                val flow = manager.launchReviewFlow(this, reviewInfo)
+                flow.addOnCompleteListener { _ ->
+                    // The flow has finished. The API does not indicate whether the user
+                    // reviewed or not, or even whether the review dialog was shown. Thus, no
+                    // matter the result, we continue our app flow.
                 }
             }
         }

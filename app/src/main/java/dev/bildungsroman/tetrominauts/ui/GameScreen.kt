@@ -42,7 +42,6 @@ fun GameScreen(
     viewState: GameViewModel.ViewState,
     interactive: Interactive,
 ) {
-
     Column(modifier = modifier) {
         GameSettings(
             interactive = interactive,
