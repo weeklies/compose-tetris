@@ -1,7 +1,5 @@
 package com.jetgame.tetris.ui
 
-import android.view.LayoutInflater
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -19,11 +17,11 @@ import androidx.compose.ui.semantics.disabled
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jetgame.tetris.R
+import com.jetgame.tetris.databinding.AnimatedStarsBinding
 import com.jetgame.tetris.logic.GameViewModel
-import com.jetgame.tetris.ui.stars.AnimatedStarsView
 import kotlin.random.Random
 
 @Composable
@@ -41,18 +39,15 @@ fun GameBackground(
             AnimatedPlanet2()
             AnimatedShipsAndAsteroids()
         }
-        AndroidView(
-            factory = {
-                val view = LayoutInflater.from(it).inflate(R.layout.animated_stars, null, false)
-
-                val stars = view.findViewById<AnimatedStarsView>(R.id.stars_white)
-                stars.onStart()
-                view
-            }
-        )
+        AnimatedStars()
 
         screen(Modifier.padding(horizontal = 20.dp, vertical = 8.dp).padding(bottom = 26.dp))
     }
+}
+
+@Composable
+fun AnimatedStars() {
+    AndroidViewBinding(AnimatedStarsBinding::inflate) { this.starsWhite.onStart() }
 }
 
 @Preview(widthDp = 400, heightDp = 700, showBackground = true)
@@ -177,7 +172,6 @@ fun AnimatedShipsAndAsteroids() {
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun Ship(
     modifier: Modifier,
@@ -234,11 +228,6 @@ fun Ship(
         modifier = modifier.offset(y = offsetY, x = offsetX).rotate(degrees = rotationDegrees),
         onDraw = { drawImage(image = imageBitmap, alpha = 0.70f) }
     )
-}
-
-private enum class ShipState {
-    Show,
-    Hide
 }
 
 private val shipsAndAsteroids =
