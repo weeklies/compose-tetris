@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <com.jetgame.tetris.ui.stars.AnimatedStarsView
-        android:id="@+id/stars_white"
+        android:id="@+id/stars_dark_mode"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:starsView_bigStarThreshold="20dp"
@@ -17,4 +17,16 @@
         app:starsView_starColors="@array/star_colors"
         app:starsView_starCount="30" />
 
+    <com.jetgame.tetris.ui.stars.AnimatedStarsView
+        android:id="@+id/stars_light_mode"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:starsView_bigStarThreshold="100dp"
+        app:starsView_maxStarSize="15dp"
+        app:starsView_meteoritesColors="@array/star_colors_light_mode"
+        app:starsView_meteoritesEnabled="true"
+        app:starsView_meteoritesInterval="5000"
+        app:starsView_minStarSize="1.0dp"
+        app:starsView_starColors="@array/star_colors_light_mode"
+        app:starsView_starCount="30" />
 </FrameLayout>

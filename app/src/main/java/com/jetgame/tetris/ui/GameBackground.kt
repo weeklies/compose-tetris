@@ -39,15 +39,16 @@ fun GameBackground(
             AnimatedPlanet2()
             AnimatedShipsAndAsteroids()
         }
-        AnimatedStars()
+        AnimatedStars(viewState.isDarkMode)
 
         screen(Modifier.padding(horizontal = 20.dp, vertical = 8.dp).padding(bottom = 26.dp))
     }
 }
 
 @Composable
-fun AnimatedStars() {
-    AndroidViewBinding(AnimatedStarsBinding::inflate) { this.starsWhite.onStart() }
+fun AnimatedStars(darkMode: Boolean) {
+    if (darkMode) AndroidViewBinding(AnimatedStarsBinding::inflate) { this.starsDarkMode.onStart() }
+    else AndroidViewBinding(AnimatedStarsBinding::inflate) { this.starsLightMode.onStart() }
 }
 
 @Preview(widthDp = 400, heightDp = 700, showBackground = true)

@@ -1,13 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
 
     <color name="light_star_color_100">#FFfafeff</color>
     <color name="light_star_color_70">#B3fafeff</color>
     <color name="light_star_color_60">#99fafeff</color>
     <color name="light_star_color_40">#66fafeff</color>
     <color name="light_gold_star_color_70">#B3f6c177</color>
+
+    <!--  References-->
+    <!--  https://lospec.com/palette-list/sweetie-16-->
+    <!--  https://m2.material.io/design/color/the-color-system.html-->
+
+    <color name="light_PurpleContainer">#24212121</color>
+    <color name="light_onPurpleContainer">#FF37003A</color>
+
+    <color name="dark_onPurple">#FF531356</color>
+    <color name="dark_PurpleContainer">#12E0E0E0</color>
+    <color name="dark_onPurpleContainer">#FFFFD6F8</color>
+
+    <color name="light_Green">#FF4CAF50</color>
+    <color name="light_Yellow">#FFFFD600</color>
+    <color name="light_Orange">#FFF57C00</color>
+    <color name="light_Silver">#FF607D8B</color>
+    <color name="light_Blue">#FF03A9F4</color>
+    <color name="light_Red">#FFF44336</color>
+    <color name="light_Purple">#FFAB47BC</color>
+
+    <color name="dark_Green">#FFA5D6A7</color>
+    <color name="dark_Yellow">#FFFFF59D</color>
+    <color name="dark_Orange">#FFFFCC80</color>
+    <color name="dark_Silver">#FFC9D3FC</color>
+    <color name="dark_Blue">#FF81D4FA</color>
+    <color name="dark_Red">#FFEF9A9A</color>
+    <color name="dark_Purple">#FFCE93D8</color>
 </resources>

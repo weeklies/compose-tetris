@@ -10,4 +10,14 @@
         <item>@color/light_star_color_40</item>
         <item>@color/light_gold_star_color_70</item>
     </integer-array>
+    <integer-array name="star_colors_light_mode">
+        <item>@color/light_gold_star_color_70</item>
+        <item>@color/dark_Green</item>
+        <item>@color/dark_Yellow</item>
+        <item>@color/dark_Orange</item>
+        <item>@color/dark_Silver</item>
+        <item>@color/dark_Blue</item>
+        <item>@color/dark_Red</item>
+        <item>@color/dark_Purple</item>
+    </integer-array>
 </resources>
