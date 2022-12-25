@@ -7,7 +7,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.jetgame.tetris"
+        applicationId "dev.bildungsroman.tetrominauts"
         minSdk 21
         targetSdk 33
         versionCode 1
@@ -39,7 +39,7 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
     }
-    namespace 'com.jetgame.tetris'
+    namespace 'dev.bildungsroman.tetrominauts'
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'

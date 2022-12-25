@@ -5,7 +5,7 @@ Note: README.md is under construction.
 ![](https://img.shields.io/badge/jetpack_compose-1.3.2-green.svg)
 ![](https://img.shields.io/badge/min_sdk_version-21-orange.svg)
 
-A space-themed, Tetris-like game on tetrominoes and tetromi(nots).
+A space-themed, Tetris-like game about tetrominoes and tetromi(nots).
 
 <img src="app/src/main/res/mipmap-xxxhdpi/ic_launcher.png" width=110 align=left hspace="10" vspace="10"  >
 
