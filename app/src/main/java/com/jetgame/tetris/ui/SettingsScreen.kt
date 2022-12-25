@@ -32,7 +32,7 @@ fun SettingsScreen(
 
             SettingsOption(
                 Icons.Outlined.DashboardCustomize,
-                "Nauts",
+                "Non-Tetrominoes",
                 settings.useNauts,
                 viewState.useNauts,
             )

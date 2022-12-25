@@ -32,13 +32,13 @@ fun GameBackground(
 ) {
     // Game Display
     Box(modifier.clearAndSetSemantics { disabled() }) {
+        AnimatedStars(viewState.isDarkMode)
         if (viewState.showBackgroundArt) {
-            AnimatedNebula(viewState.isDarkMode)
             AnimatedPlanet1(viewState.isDarkMode)
             AnimatedPlanet2(viewState.isDarkMode)
+            if (viewState.isDarkMode) AnimatedNebula() else AnimatedPlanet3()
             AnimatedShipsAndAsteroids(viewState.isDarkMode)
         }
-        AnimatedStars(viewState.isDarkMode)
         screen(Modifier.padding(horizontal = 20.dp, vertical = 8.dp).padding(bottom = 26.dp))
     }
 }
@@ -56,7 +56,7 @@ fun PreviewGameBody() {
 }
 
 @Composable
-fun AnimatedNebula(darkMode: Boolean) {
+fun AnimatedNebula() {
     val infiniteTransition = rememberInfiniteTransition()
     val angle by
         infiniteTransition.animateFloat(
@@ -73,17 +73,51 @@ fun AnimatedNebula(darkMode: Boolean) {
                 )
         )
 
-    // TODO: make this into seperate composables for light and dark mode.
     Row(Modifier.fillMaxSize()) {
-        Box(Modifier.weight(if (darkMode) 6f else 1f)) {
+        Box(Modifier.weight(6f)) {
             Image(
-                painter = painterResource(if (darkMode) R.drawable.nebula else planets3.random()),
+                painter = painterResource(R.drawable.nebula),
                 contentDescription = "",
-                alpha = if (darkMode) 0.50f else 0.9f,
+                alpha = 0.50f,
                 modifier =
-                    Modifier.offset((-50).dp, if (darkMode) 60.dp else 40.dp)
-                        .fillMaxSize()
-                        .graphicsLayer { rotationZ = angle },
+                    Modifier.offset((-50).dp, 60.dp).fillMaxSize().graphicsLayer {
+                        rotationZ = angle
+                    },
+                alignment = Alignment.BottomStart,
+            )
+        }
+        Spacer(Modifier.weight(2f))
+    }
+}
+
+@Composable
+fun AnimatedPlanet3() {
+    val infiniteTransition = rememberInfiniteTransition()
+    val angle by
+        infiniteTransition.animateFloat(
+            initialValue = 0F,
+            targetValue = 60F,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            200 /* seconds */ * 1000,
+                            easing = LinearEasing,
+                        ),
+                    repeatMode = RepeatMode.Reverse,
+                )
+        )
+
+    Row(Modifier.fillMaxSize()) {
+        Box(Modifier.weight(1f)) {
+            Image(
+                painter = painterResource(planets3.random()),
+                contentDescription = "",
+                alpha = 0.9f,
+                modifier =
+                    Modifier.offset((-50).dp, 40.dp).fillMaxSize().graphicsLayer {
+                        rotationZ = angle
+                    },
                 alignment = Alignment.BottomStart,
             )
         }
