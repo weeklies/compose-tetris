@@ -1,7 +1,6 @@
 package com.jetgame.tetris.ui
 
 import android.view.LayoutInflater
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Canvas
@@ -189,69 +188,52 @@ fun Ship(
     val width = LocalConfiguration.current.screenWidthDp
     val height = LocalConfiguration.current.screenHeightDp
 
-    val speedRandom = Random.nextInt(20 * 1000, 200 * 1000)
-
-    val state = remember { mutableStateOf(ShipState.Show) }
+    val speedRandom = remember { Random.nextInt(20 * 1000, 60 * 1000) }
     val rotationDegrees = remember { Random.nextInt(0, 360).toFloat() }
 
     // Extra top padding for scoreboard
     val extraTopPadding = 20
-    val yRandom = Random.nextInt(verticalPadding + extraTopPadding, (height - verticalPadding))
-    val yRandom2 = Random.nextInt(verticalPadding + extraTopPadding, (height - verticalPadding))
-    val xRandom = Random.nextInt(horizontalPadding, (width - horizontalPadding))
-    val xRandom2 = Random.nextInt(horizontalPadding, (width - horizontalPadding))
-
-    val offsetYAnimation: Dp by
-        animateDpAsState(
-            targetValue =
-                when (state.value) {
-                    ShipState.Show -> yRandom2.dp
-                    ShipState.Hide -> yRandom.dp
-                },
-            animationSpec = tween(speedRandom)
-        )
-
-    val offsetXAnimation: Dp by
-        animateDpAsState(
-            targetValue =
-                when (state.value) {
-                    ShipState.Show -> xRandom2.dp
-                    else -> xRandom.dp
-                },
-            animationSpec = tween(speedRandom)
-        )
-
-    LaunchedEffect(
-        key1 = state,
-        block = {
-            state.value =
-                when (state.value) {
-                    ShipState.Show -> ShipState.Hide
-                    ShipState.Hide -> ShipState.Show
-                }
-        }
-    )
-
-    // TODO: Check if this is efficiently working
-    AnimatedContent(targetState = state.value == ShipState.Show) {
-        Canvas(
-            modifier =
-                modifier
-                    .offset(
-                        y = offsetYAnimation,
-                        x = offsetXAnimation,
-                    )
-                    .rotate(
-                        degrees = rotationDegrees,
-                    ),
-            onDraw = {
-                drawImage(
-                    image = imageBitmap,
-                    alpha = 0.70f,
-                )
-            }
-        )
+    val yRandom = remember {
+        Random.nextInt(verticalPadding + extraTopPadding, (height - verticalPadding))
     }
+    val yRandom2 = remember {
+        Random.nextInt(verticalPadding + extraTopPadding, (height - verticalPadding))
+    }
+    val xRandom = remember { Random.nextInt(horizontalPadding, (width - horizontalPadding)) }
+    val xRandom2 = remember { Random.nextInt(horizontalPadding, (width - horizontalPadding)) }
+
+    val infiniteTransition = rememberInfiniteTransition()
+    val offsetX by
+        infiniteTransition.animateValue(
+            initialValue = xRandom2.dp,
+            targetValue = xRandom.dp,
+            typeConverter = Dp.VectorConverter,
+            animationSpec =
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            speedRandom,
+                            easing = FastOutLinearInEasing,
+                        ),
+                    repeatMode = RepeatMode.Reverse,
+                )
+        )
+    val offsetY by
+        infiniteTransition.animateValue(
+            initialValue = yRandom2.dp,
+            targetValue = yRandom.dp,
+            typeConverter = Dp.VectorConverter,
+            animationSpec =
+                infiniteRepeatable(
+                    animation = tween(speedRandom),
+                    repeatMode = RepeatMode.Reverse,
+                )
+        )
+
+    Canvas(
+        modifier = modifier.offset(y = offsetY, x = offsetX).rotate(degrees = rotationDegrees),
+        onDraw = { drawImage(image = imageBitmap, alpha = 0.70f) }
+    )
 }
 
 private enum class ShipState {

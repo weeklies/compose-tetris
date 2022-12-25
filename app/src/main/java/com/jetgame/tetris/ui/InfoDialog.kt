@@ -23,10 +23,8 @@ fun InfoDialog(isOpen: Boolean, onDismiss: () -> Unit) {
                 Text(
                     text =
                         """
-                            Tetrominauts is a fun spin on the traditional block puzzle game, combining tetrominoes with tetromi(nots). 
+                            Tetrominauts is a spin on the traditional block puzzle game, combining tetrominoes with tetromi(nots). 
                              
-                            Send your scores to outer space, astronaut!
-                            
                             Controls
                             • Rotate: Tap or Swipe Up
                             • Move: Swipe Left or Right
