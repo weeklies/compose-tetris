@@ -50,6 +50,26 @@ https://trevor-pupkin.itch.io/outer-buddies
 LICENCE: This asset pack can be used in both free and commercial projects. You can modify it to suit your own needs.
 ```
 
+### Background Art
+
+https://hexadecimalwtf.itch.io/space-pixels
+
+```
+Hi Everyone!,
+
+Feel free to use this in any project you want. No credit is necessary. If you do use these assets for your project I would be happy to see them in use! Feel free with add a comment with a link.
+
+-Hex
+```
+
+https://norma-2d.itch.io/celestial-objects-pixel-art-pack
+
+```
+LICENSE: You can use this asset pack both in free and commercial projects. You may modify it to suit your own needs. Credit is not necessary, but appreciated.
+
+You may not redistribute or resell the assets/ the asset pack!
+```
+
 ### BGM
 
 https://opengameart.org/content/another-space-background-track
