@@ -36,7 +36,7 @@ val dark_onOrange = Color(0xFF5D1800)
 
 val md_theme_light_error = Color(0xFFBA1A1A)
 val md_theme_light_onError = Color(0xFFFFFFFF)
-val md_theme_light_background = Color(0xFFFFFBFF)
+val md_theme_light_background = Color(0xFFe2e7fd)
 val md_theme_light_onBackground = Color(0xFF1E1A1D)
 
 val md_theme_dark_error = Color(0xFFFFB4AB)

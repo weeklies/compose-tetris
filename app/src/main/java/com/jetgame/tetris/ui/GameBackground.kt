@@ -31,16 +31,14 @@ fun GameBackground(
     screen: @Composable (Modifier) -> Unit
 ) {
     // Game Display
-    // TODO: make this light mode compatible
     Box(modifier.clearAndSetSemantics { disabled() }) {
-        if (viewState.showBackgroundArt && viewState.isDarkMode) {
-            AnimatedNebula()
-            AnimatedPlanet1()
-            AnimatedPlanet2()
-            AnimatedShipsAndAsteroids()
+        if (viewState.showBackgroundArt) {
+            AnimatedNebula(viewState.isDarkMode)
+            AnimatedPlanet1(viewState.isDarkMode)
+            AnimatedPlanet2(viewState.isDarkMode)
+            AnimatedShipsAndAsteroids(viewState.isDarkMode)
         }
         AnimatedStars(viewState.isDarkMode)
-
         screen(Modifier.padding(horizontal = 20.dp, vertical = 8.dp).padding(bottom = 26.dp))
     }
 }
@@ -58,7 +56,7 @@ fun PreviewGameBody() {
 }
 
 @Composable
-fun AnimatedNebula() {
+fun AnimatedNebula(darkMode: Boolean) {
     val infiniteTransition = rememberInfiniteTransition()
     val angle by
         infiniteTransition.animateFloat(
@@ -75,26 +73,27 @@ fun AnimatedNebula() {
                 )
         )
 
+    // TODO: make this into seperate composables for light and dark mode.
     Row(Modifier.fillMaxSize()) {
-        Box(Modifier.weight(3f)) {
+        Box(Modifier.weight(if (darkMode) 6f else 1f)) {
             Image(
-                painter = painterResource(id = R.drawable.nebula),
+                painter = painterResource(if (darkMode) R.drawable.nebula else planets3.random()),
                 contentDescription = "",
-                alpha = 0.50f,
+                alpha = if (darkMode) 0.50f else 0.9f,
                 modifier =
-                    Modifier.offset((-50).dp, 60.dp).fillMaxSize().graphicsLayer {
-                        rotationZ = angle
-                    },
+                    Modifier.offset((-50).dp, if (darkMode) 60.dp else 40.dp)
+                        .fillMaxSize()
+                        .graphicsLayer { rotationZ = angle },
                 alignment = Alignment.BottomStart,
             )
         }
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.weight(2f))
     }
 }
 
 // The planet on the center right.
 @Composable
-fun AnimatedPlanet1() {
+fun AnimatedPlanet1(darkMode: Boolean) {
     val infiniteTransition = rememberInfiniteTransition()
     val angle by
         infiniteTransition.animateFloat(
@@ -115,9 +114,9 @@ fun AnimatedPlanet1() {
         Spacer(Modifier.weight(3f))
         Box(Modifier.weight(1f)) {
             Image(
-                painter = painterResource(id = planets1.random()),
+                painter = painterResource(planets1.random()),
                 contentDescription = "",
-                alpha = 0.50f,
+                alpha = if (darkMode) 0.50f else 0.7f,
                 modifier =
                     Modifier.offset(40.dp, 0.dp).fillMaxSize().graphicsLayer { rotationZ = angle },
             )
@@ -127,7 +126,7 @@ fun AnimatedPlanet1() {
 
 // The planet on the top left.
 @Composable
-fun AnimatedPlanet2() {
+fun AnimatedPlanet2(darkMode: Boolean) {
     val infiniteTransition = rememberInfiniteTransition()
     val angle by
         infiniteTransition.animateFloat(
@@ -147,9 +146,9 @@ fun AnimatedPlanet2() {
     Row(Modifier.fillMaxSize()) {
         Box(Modifier.weight(1f)) {
             Image(
-                painter = painterResource(id = planets2.random()),
+                painter = painterResource(planets2.random()),
                 contentDescription = "",
-                alpha = 0.60f,
+                alpha = if (darkMode) 0.60f else 0.8f,
                 modifier = Modifier.offset((-35).dp, 80.dp).graphicsLayer { rotationZ = angle },
             )
         }
@@ -158,16 +157,16 @@ fun AnimatedPlanet2() {
 }
 
 @Composable
-fun AnimatedShipsAndAsteroids() {
+fun AnimatedShipsAndAsteroids(darkMode: Boolean) {
     val count = Random.nextInt(3, 5)
     val ships = shipsAndAsteroids.shuffled().take(count)
     Box(modifier = Modifier.fillMaxSize()) {
         repeat(count) {
             Ship(
-                Modifier,
                 horizontalPadding = 24,
                 verticalPadding = 120,
-                imageBitmap = ImageBitmap.imageResource(id = ships[it])
+                imageBitmap = ImageBitmap.imageResource(ships[it]),
+                opacity = if (darkMode) 0.7f else 0.8f,
             )
         }
     }
@@ -175,10 +174,10 @@ fun AnimatedShipsAndAsteroids() {
 
 @Composable
 fun Ship(
-    modifier: Modifier,
     horizontalPadding: Int,
     imageBitmap: ImageBitmap,
-    verticalPadding: Int
+    verticalPadding: Int,
+    opacity: Float,
 ) {
     val width = LocalConfiguration.current.screenWidthDp
     val height = LocalConfiguration.current.screenHeightDp
@@ -226,8 +225,8 @@ fun Ship(
         )
 
     Canvas(
-        modifier = modifier.offset(y = offsetY, x = offsetX).rotate(degrees = rotationDegrees),
-        onDraw = { drawImage(image = imageBitmap, alpha = 0.70f) }
+        modifier = Modifier.offset(y = offsetY, x = offsetX).rotate(degrees = rotationDegrees),
+        onDraw = { drawImage(image = imageBitmap, alpha = opacity) }
     )
 }
 
@@ -256,4 +255,11 @@ private val planets2 =
         R.drawable.planet2,
         R.drawable.planet3,
         R.drawable.planet4,
+    )
+private val planets3 =
+    listOf(
+        R.drawable.bplanet1,
+        R.drawable.bplanet2,
+        R.drawable.bplanet3,
+        R.drawable.bplanet4,
     )
