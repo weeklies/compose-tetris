@@ -76,8 +76,13 @@ val NautBlockType =
         // Pentomino (a selection)
         listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(1, 0), Offset(-1, 0)), // t
         listOf(Offset(1, -1), Offset(0, -1), Offset(0, 0), Offset(0, 1), Offset(1, 1)), // u
-        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(1, 0), Offset(-1, -1)), // T
-        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(-1, 0), Offset(1, -1)), // T
+        listOf(Offset(0, -1), Offset(1, -1), Offset(1, 0), Offset(2, 0), Offset(2, 1)), // Staircase
+        listOf(Offset(0, 1), Offset(1, 1), Offset(1, 0), Offset(1, -1), Offset(2, -1)), // S
+        listOf(Offset(0, -1), Offset(1, -1), Offset(1, 0), Offset(1, 1), Offset(2, 1)), // Z
+        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(1, 0), Offset(2, 0)), // Big T
+        // Strange chiral T
+        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(1, 0), Offset(-1, -1)),
+        listOf(Offset(0, 1), Offset(0, 0), Offset(0, -1), Offset(-1, 0), Offset(1, -1)),
     )
 
 fun DropBlock.isValidInMatrix(blocks: List<Block>, matrix: Pair<Int, Int>): Boolean {
