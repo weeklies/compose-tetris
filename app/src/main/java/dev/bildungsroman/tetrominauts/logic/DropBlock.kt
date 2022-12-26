@@ -103,7 +103,7 @@ fun generateDropAndNautBlocks(
     // DropBlock.
     val nautProbability = nautProbabilityInt / 10.0 / 2.0
     return colorIndexes.map {
-        if (nautProbability >= Random.nextDouble())
+        if (useNauts && nautProbability >= Random.nextDouble())
         // Provide a naut block
         DropBlock(
                 NautBlockType[Random.nextInt(0, NautBlockType.size)],
