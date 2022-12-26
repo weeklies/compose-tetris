@@ -1,5 +1,3 @@
-Note: README.md is under construction.
-
 # Tetrominauts
 
 ![](https://img.shields.io/badge/jetpack_compose-1.3.2-green.svg)

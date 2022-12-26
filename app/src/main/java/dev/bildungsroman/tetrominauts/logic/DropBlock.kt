@@ -96,30 +96,31 @@ fun generateDropAndNautBlocks(
 ): List<DropBlock> {
     // Skip the first color, which is Gray.
     val colorIndexes = List(lightBlockColors.size - 1) { it + 1 }.shuffled()
-    val dropBlocks =
-        colorIndexes.map {
-            DropBlock(
-                    BlockType[Random.nextInt(BlockType.size)],
-                    Offset(Random.nextInt(matrix.first - 1), -1),
-                    it,
-                )
-                .adjustOffset(matrix, false)
-        }
 
-    val nautProbability = nautProbabilityInt / 10
-
-    return if (!useNauts || nautProbability <= Random.nextDouble()) {
-        dropBlocks
-    } else {
-        val nautBlock =
-            DropBlock(
+    // Convert nautProbabilityInt to a double.
+    // Divide by 2 to allow max nautProbabilityInt of 10 to provide a 50% chance of having a naut as
+    // a
+    // DropBlock.
+    val nautProbability = nautProbabilityInt / 10.0 / 2.0
+    return colorIndexes.map {
+        if (nautProbability >= Random.nextDouble())
+        // Provide a naut block
+        DropBlock(
                 NautBlockType[Random.nextInt(0, NautBlockType.size)],
-                // The stricter x-range is important as certain Nauts can trigger an instant game
+                // The stricter x-range is important as certain Nauts can trigger an instant
+                // game
                 // over if it was not the case.
                 Offset(Random.nextInt(1, matrix.first - 2), -1),
                 // Skip the first color, which is Gray.
                 Random.nextInt(1, lightBlockColors.size)
             )
-        (dropBlocks + nautBlock).shuffled()
+        else
+        // Provide a tetromino block
+        DropBlock(
+                    BlockType[Random.nextInt(BlockType.size)],
+                    Offset(Random.nextInt(matrix.first - 1), -1),
+                    it,
+                )
+                .adjustOffset(matrix, false)
     }
 }

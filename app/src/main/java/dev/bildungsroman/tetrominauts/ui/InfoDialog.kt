@@ -35,7 +35,7 @@ fun InfoDialog(isOpen: Boolean, onDismiss: () -> Unit) {
                         style = typography.h6
                     )
                     Text(
-                        "\nArt and Sound Credits: hexadecimalwtf, Kenney.nl, Norma2D, Trevor Pupkin, yd",
+                        "\nArt and Sound Credits\nhexadecimalwtf, Kenney.nl, Norma2D, Trevor Pupkin, yd",
                         fontFamily = FontFamily.Monospace,
                     )
                 }
