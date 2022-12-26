@@ -24,7 +24,7 @@ significant changes in functionality.
 
 ## License
 
-https://github.com/weeklies/compose-tetris/blob/main/LICENSE.md
+https://github.com/weeklies/tetrominauts/blob/main/LICENSE.md
 
 Common Clause License (MIT)
 
