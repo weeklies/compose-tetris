@@ -28,23 +28,23 @@ data class DropBlock(
         val yOffset =
             if (adjustY)
                 (location.minByOrNull { it.y }?.y?.takeIf { it < 0 }?.absoluteValue ?: 0).toInt() +
-                    (location
+                        (location
                             .maxByOrNull { it.y }
                             ?.y
                             ?.takeIf { it > matrix.second - 1 }
                             ?.let { matrix.second - it - 1 }
                             ?: 0)
-                        .toInt()
+                            .toInt()
             else 0
         val xOffset =
             (location.minByOrNull { it.x }?.x?.takeIf { it < 0 }?.absoluteValue ?: 0).toInt() +
-                (location
+                    (location
                         .maxByOrNull { it.x }
                         ?.x
                         ?.takeIf { it > matrix.first - 1 }
                         ?.let { matrix.first - it - 1 }
                         ?: 0)
-                    .toInt()
+                        .toInt()
         return moveBy(xOffset to yOffset)
     }
 
@@ -88,9 +88,9 @@ val NautBlockType =
 fun DropBlock.isValidInMatrix(blocks: List<Block>, matrix: Pair<Int, Int>): Boolean {
     return location.none { location ->
         location.x < 0 ||
-            location.x > matrix.first - 1 ||
-            location.y > matrix.second - 1 ||
-            blocks.any { it.location.x == location.x && it.location.y == location.y }
+                location.x > matrix.first - 1 ||
+                location.y > matrix.second - 1 ||
+                blocks.any { it.location.x == location.x && it.location.y == location.y }
     }
 }
 
@@ -110,22 +110,19 @@ fun generateDropAndNautBlocks(
     return colorIndexes.map {
         if (useNauts && nautProbability >= Random.nextDouble())
         // Provide a naut block
-        DropBlock(
+            DropBlock(
                 NautBlockType[Random.nextInt(0, NautBlockType.size)],
-                // The stricter x-range is important as certain Nauts can trigger an instant
-                // game
-                // over if it was not the case.
-                Offset(Random.nextInt(1, matrix.first - 2), -1),
+                Offset(matrix.first / 2 - 1, -1),
                 // Skip the first color, which is Gray.
                 Random.nextInt(1, lightBlockColors.size)
             )
         else
         // Provide a tetromino block
-        DropBlock(
-                    BlockType[Random.nextInt(BlockType.size)],
-                    Offset(Random.nextInt(matrix.first - 1), -1),
-                    it,
-                )
+            DropBlock(
+                BlockType[Random.nextInt(BlockType.size)],
+                Offset(matrix.first / 2 - 1, -1),
+                it,
+            )
                 .adjustOffset(matrix, false)
     }
 }
