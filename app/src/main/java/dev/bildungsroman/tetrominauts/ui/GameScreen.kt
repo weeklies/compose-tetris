@@ -101,7 +101,7 @@ fun GameScreen(
                             onDrag = { change, dragAmount ->
                                 change.consume()
 
-                                val minAmount = 30
+                                val minAmount = 1
                                 val (x, y) = dragAmount
                                 val absX = x.absoluteValue
                                 val absY = y.absoluteValue
